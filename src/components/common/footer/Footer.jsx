@@ -10,7 +10,7 @@ const Footer = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <>
-      <Box className='footerContact'>
+      {/* <Box className='footerContact'>
       <Grid container className='container' justifyContent="center" alignItems="center">
         <Grid container className='send flex' direction={isSmallScreen ? 'column' : 'row'} spacing={2}>
           <Grid item className='text'>
@@ -44,7 +44,7 @@ const Footer = () => {
           </Grid>
         </Grid>
       </Grid>
-    </Box>
+    </Box> */}
 
       <footer>
         <div className='container'>
