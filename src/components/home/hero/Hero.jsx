@@ -2,6 +2,7 @@ import React from "react";
 import Heading from "../../common/Heading";
 import "./hero.css";
 import { Link } from "react-router-dom";
+import { Box } from "@mui/material";
 
 const Hero = () => {
   return (
@@ -30,6 +31,7 @@ const Hero = () => {
           </Link>
         </div>
       </div>
+      
     </section>
   );
 };

@@ -8,12 +8,17 @@ const getUniqueValues = (list, key) => {
 };
 
 const AdvanceFilter = ({ data, onFilterUpdate }) => {
+  const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
+  
+  // Set initial slider values based on tenure
+  const initialSliderValue = propertyTenure === 'buy' ? 1000000000 : 100000;
+  const initialPriceMin = propertyTenure === 'buy' ? 500000 : 10000;
+  
   const [location, setLocationChange] = useState("");
   const [property, setPropertyChange] = useState("");
   const [bedrooms, setBedroomsChange] = useState("");
-  const [sliderValue, setSliderValue] = useState(50000000);
-  const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
-  const [priceMin, setPriceMin] = useState(10000);
+  const [sliderValue, setSliderValue] = useState(initialSliderValue);
+  const [priceMin, setPriceMin] = useState(initialPriceMin);
 
   const propertyTypes = getUniqueValues(data, "property_type");
   const locations = getUniqueValues(data, "property_city");
@@ -29,11 +34,18 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
 
   const handleSliderChange = (event, newValue) => {
     setSliderValue(newValue);
-    
   };
 
   const handleTenureClick = (tenure) => {
     setPropertyTenure(tenure);
+    // Update slider values based on tenure
+    if (tenure === 'buy') {
+      setSliderValue(1000000000);
+      setPriceMin(500000);
+    } else if (tenure === 'rent') {
+      setSliderValue(100000);
+      setPriceMin(10000);
+    }
   };
 
   const handleMinPrice = (event) => {
@@ -49,18 +61,6 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
   };
 
   useEffect(() => {
-    console.log('Filtering with:', {
-      propertyTenure, property, location, bedrooms, priceMin, sliderValue
-    });
-  if(propertyTenure==='buy'){
-    setSliderValue(1000000000);
-    setPriceMin(500000)
-  }
-  if(propertyTenure==='rent'){
-    setSliderValue(100000);
-    setPriceMin(10000)
-  }
-
     const filtered = data.filter(item => {
       const matchesCategory = !propertyTenure || item.property_tenure === propertyTenure;
       const matchesType = !property || item.property_type === property;
@@ -71,7 +71,6 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
       return matchesCategory && matchesType && matchesLocation && matchesBedrooms && matchesMinPrice && matchesMaxPrice;
     });
 
-    console.log('Filtered list:', filtered);
     onFilterUpdate(filtered);
   }, [location, property, bedrooms, sliderValue, propertyTenure, priceMin, data, onFilterUpdate]);
 
@@ -164,12 +163,12 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
           variant={isSmallScreen ? "body2" : "body1"}
           className="slider-value"
         >
-          Price: Ksh {priceMin} - {sliderValue}
+          Price: Ksh {priceMin.toLocaleString()} - {sliderValue.toLocaleString()}
         </Typography>
 
         <Slider
-          min={20000}
-          max={1000000000}
+          min={propertyTenure === 'buy' ? 500000 : 10000}
+          max={propertyTenure === 'buy' ? 1000000000 : 100000}
           value={sliderValue}
           onChange={handleSliderChange}
           valueLabelDisplay="auto"
