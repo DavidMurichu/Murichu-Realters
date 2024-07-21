@@ -1,0 +1,99 @@
+
+@media(max-width:768px){
+  .recent{
+    max-width: 90%;
+  }
+
+}
+
+.recent .text {
+  padding: 30px;
+}
+
+.recent .category span {
+  padding: 4px 15px;
+  border-radius: 2px;
+  font-weight: 600;
+  font-size: 13px;
+  display: inline-block;
+}
+
+.recent .category i {
+  font-size: 20px;
+  color: #bec7d8;
+}
+
+.recent p {
+  color: #72809d;
+}
+
+.recent .button {
+  border-top: 1px solid #e4e8f3;
+  padding: 10px 30px;
+}
+
+.recent .box {
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.recent .box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.recent .box:hover .hover-icons {
+  display: flex;
+}
+
+.hover-icons {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+}
+
+
+.hover-icons div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: orange;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+
+.hover-icons i {
+  font-size: 20px;
+  color: white;
+}
+
+.helper-text {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hover-icons div:hover .helper-text {
+  display: block;
+}
+.float-right {
+  float: right; 
+}
+
+.btn1 a {
+  color: white;
+}

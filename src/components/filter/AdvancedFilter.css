@@ -1,0 +1,106 @@
+.card {
+  /* Style the card container */
+  display: flex;
+  margin: 3rem;
+  margin-left: 10%;
+  flex-direction: column;
+  padding: 20px;
+  border: none;
+  border-radius: 4px;
+  max-width: 100%; /* Adjust card width as needed */
+}
+
+.dropdown-container,
+.slider-container {
+  max-width: 100%;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.slider-container{
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.size-slider {
+  width: 300px;
+  background-color: #ddd;
+}
+
+.slider-value {
+  font-size: 16px;
+}
+
+.size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background-color: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.tenure-filter{
+  min-height: 0.5vh;
+  background: black;
+  color: white;
+}
+.tenure-filter ul{
+  display: flex;
+}
+.tenure-filter ul li{
+  padding: 0.7rem;
+  margin-right:1px;
+  font-size: 2vh;
+}
+.tenure-filter ul li:hover{
+  background: #27ae60;
+}
+.active{
+  background: #27ae60;
+}
+
+.dropdown-container select{
+
+  width:fit-content;
+  margin-right: 10px;
+  margin-top: 10px;
+  font-size: 1rem;
+  max-width: 30%;
+  border-radius: 10px;
+  border-color: cadetblue;
+}
+
+@media(max-width:800){
+.dropdown-container{
+  font-size: 10.5px;
+  flex-direction: column;
+}
+}
+
+.price-container div input{
+  border: 1px solid black;
+  height: 2rem;
+  font-size: medium;
+  margin-top: 1rem;
+  margin-right: 2rem;
+  margin-left: 0;
+  padding: 10px;
+  max-width: 40%;
+
+}
+.price-container{
+  display: flex;
+}
+.price-container div{
+  display: flex;
+  flex-direction: column;
+}
+

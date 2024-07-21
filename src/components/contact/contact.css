@@ -1,0 +1,76 @@
+/* Contact Section Styles */
+
+
+.contact .container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contact form {
+  background: #fff; /* White background */
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contact form h4 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+.contact form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.contact form div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.contact input,
+.contact textarea {
+  width: calc(50% - 10px);
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #ccc; /* Light gray border */
+  font-size: 16px;
+ margin-bottom: 10px;
+}
+
+.contact textarea {
+  width: 100%;
+  resize: none;
+}
+
+.contact button {
+  padding: 15px 30px;
+  background-color: #007bff; /* Blue button color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contact button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+@media screen and (max-width: 768px) {
+  .contact form div {
+    flex-direction: column;
+  }
+  .contact input,
+  .contact textarea {
+    width: 100%;
+  }
+  .contact form h4 {
+    margin-bottom: 30px;
+  }
+}

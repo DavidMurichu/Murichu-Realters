@@ -1,0 +1,210 @@
+/* Bootstrap Table CSS */
+
+/* Base styles for tables */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+.table .table {
+  background-color: #fff;
+}
+
+/* Hover states */
+.table-hover tbody tr:hover {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+/* Table head */
+.table thead th {
+  background-color: #e9ecef;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Striped tables */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Bordered tables */
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered thead th,
+.table-bordered thead td {
+  border-bottom-width: 2px;
+}
+
+/* Borderless tables */
+.table-borderless th,
+.table-borderless td,
+.table-borderless thead th,
+.table-borderless tbody + tbody {
+  border: 0;
+}
+
+/* Small tables */
+.table-sm th,
+.table-sm td {
+  padding: 0.3rem;
+}
+
+/* Tables with caption */
+.caption-top {
+  caption-side: top;
+}
+
+.caption-bottom {
+  caption-side: bottom;
+}
+
+/* Contextual classes for table rows or cells */
+.table-primary,
+.table-primary > th,
+.table-primary > td {
+  background-color: #b8daff;
+}
+
+.table-secondary,
+.table-secondary > th,
+.table-secondary > td {
+  background-color: #d6d8db;
+}
+
+.table-success,
+.table-success > th,
+.table-success > td {
+  background-color: #c3e6cb;
+}
+
+.table-info,
+.table-info > th,
+.table-info > td {
+  background-color: #bee5eb;
+}
+
+.table-warning,
+.table-warning > th,
+.table-warning > td {
+  background-color: #ffeeba;
+}
+
+.table-danger,
+.table-danger > th,
+.table-danger > td {
+  background-color: #f5c6cb;
+}
+
+.table-light,
+.table-light > th,
+.table-light > td {
+  background-color: #fdfdfe;
+}
+
+.table-dark,
+.table-dark > th,
+.table-dark > td {
+  background-color: #c6c8ca;
+}
+
+/* Contextual classes for table head cells */
+.thead-dark th {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #454d55;
+}
+
+.thead-light th {
+  color: #495057;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+/* Responsive tables */
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive > .table-bordered {
+  border: 0;
+}
+
+.bordered-table {
+  border-collapse: collapse;
+  margin: 4rem;
+  margin-left: 15%;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  width: fit-content;
+  border: 1px solid #ddd;
+}
+
+.bordered-table th,
+.bordered-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.no-data {
+margin-left: 40%;
+height: 50vh;
+border: none;
+padding: 20px;
+
+
+}
+
+.no-data-message button {
+  align-items: center;
+  background-color: #eee;
+  border: none;
+  margin-top: 10vh;
+  padding: 20px;
+  cursor: pointer;
+}
+.compare-section{
+  align-items: center;
+}
+
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+@media (max-width: 800px) {
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+
+}
