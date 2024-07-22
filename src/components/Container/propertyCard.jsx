@@ -65,8 +65,8 @@ const PropertyInformationPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" style={{ overflowX: 'hidden', padding: 0 }}>
-      <Box mt={4}>
+    <Container maxWidth={false} disableGutters style={{ overflowX: 'hidden' }}>
+      <Box>
         <Box position="relative" width="100%" bgcolor="#f0f0f0">
           <Carousel
             showThumbs={false}
@@ -85,6 +85,7 @@ const PropertyInformationPage = () => {
             variant="contained"
             onClick={() => openCarousel(0)}
             style={{
+              borderRadius: '5px',
               background: 'white',
               color: 'black',
               position: 'absolute',
@@ -141,7 +142,7 @@ const PropertyInformationPage = () => {
           </Box>
         )}
 
-        <Box p={2} bgcolor="#f0f0f0" borderRadius={8} mb={3}>
+        <Box p={2} bgcolor="#f0f0f0" borderRadius={8} mb={3} marginX={10} mt={0} sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <Box display="flex" flexDirection="column" gap={2}>
@@ -176,105 +177,104 @@ const PropertyInformationPage = () => {
             </Grid>
           </Grid>
           <Grid item xs={12}>
-  <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2} p={2} bgcolor="#f0f0f0" borderRadius={8} mb={3}>
-    {/* Get in touch */}
-    <Box flex={1} p={2} yyyyy borderRadius={8}>
-      <Typography variant="h6" gutterBottom style={{ color: '#000' }}>
-        Get In Touch
-      </Typography>
-      <form noValidate autoComplete="off">
-        <TextField
-          label="Name"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ style: { color: '#000' } }}
-          InputProps={{
-            style: { color: '#000' },
-            classes: { notchedOutline: { borderColor: '#000' } },
-          }}
-        />
-        <TextField
-          label="Surname"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ style: { color: '#000' } }}
-          InputProps={{
-            style: { color: '#000' },
-            classes: { notchedOutline: { borderColor: '#000' } },
-          }}
-        />
-        <TextField
-          label="Email"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ style: { color: '#000' } }}
-          InputProps={{
-            style: { color: '#000' },
-            classes: { notchedOutline: { borderColor: '#000' } },
-          }}
-        />
-        <TextField
-          label="Phone Number"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ style: { color: '#000' } }}
-          InputProps={{
-            style: { color: '#000' },
-            classes: { notchedOutline: { borderColor: '#000' } },
-          }}
-        />
-        <TextField
-          label="Message"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          multiline
-          rows={4}
-          InputLabelProps={{ style: { color: '#000' } }}
-          InputProps={{
-            style: { color: '#000' },
-            classes: { notchedOutline: { borderColor: '#000' } },
-          }}
-        />
-        <Button variant="contained" style={{ backgroundColor: '#27ae60', color: '#fff' }} fullWidth>
-          Request
-        </Button>
-      </form>
-    </Box>
-    
-    {/* Agent Info */}
-    <Box flex={1} p={2}  borderRadius={8}>
-      <Typography variant="h6" gutterBottom style={{ color: '#000' }}>
-        Agent Information
-      </Typography>
-      <Grid container alignItems="center" spacing={2}>
-        <Grid item>
-          <Avatar src={agent_photo} alt={agent_name} />
-        </Grid>
-        <Grid item>
-          <Typography variant="body1" style={{ color: '#000' }}>{agent_name}</Typography>
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <IconButton href={`https://wa.me/${agent_whatsapp}`} target="_blank" style={{ color: '#27ae60' }}>
-              <WhatsApp />
-            </IconButton>
-            <IconButton href={`mailto:${agent_email}`} style={{ color: '#27ae60' }}>
-              <Email />
-            </IconButton>
-            <IconButton href={`tel:${agent_phone}`} style={{ color: '#27ae60' }}>
-              <Phone />
-            </IconButton>
-          </Box>
-        </Grid>
-      </Grid>
-    </Box>
-  </Box>
-</Grid>
+            <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2} p={2} bgcolor="#f0f0f0" borderRadius={8} mb={3}>
+              {/* Get in touch */}
+              <Box flex={1} p={2} borderRadius={8}>
+                <Typography variant="h6" gutterBottom style={{ color: '#000' }}>
+                  Get In Touch
+                </Typography>
+                <form noValidate autoComplete="off">
+                  <TextField
+                    label="Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    InputLabelProps={{ style: { color: '#000' } }}
+                    InputProps={{
+                      style: { color: '#000' },
+                      classes: { notchedOutline: { borderColor: '#000' } },
+                    }}
+                  />
+                  <TextField
+                    label="Surname"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    InputLabelProps={{ style: { color: '#000' } }}
+                    InputProps={{
+                      style: { color: '#000' },
+                      classes: { notchedOutline: { borderColor: '#000' } },
+                    }}
+                  />
+                  <TextField
+                    label="Email"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    InputLabelProps={{ style: { color: '#000' } }}
+                    InputProps={{
+                      style: { color: '#000' },
+                      classes: { notchedOutline: { borderColor: '#000' } },
+                    }}
+                  />
+                  <TextField
+                    label="Phone Number"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    InputLabelProps={{ style: { color: '#000' } }}
+                    InputProps={{
+                      style: { color: '#000' },
+                      classes: { notchedOutline: { borderColor: '#000' } },
+                    }}
+                  />
+                  <TextField
+                    label="Message"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    multiline
+                    rows={4}
+                    InputLabelProps={{ style: { color: '#000' } }}
+                    InputProps={{
+                      style: { color: '#000' },
+                      classes: { notchedOutline: { borderColor: '#000' } },
+                    }}
+                  />
+                  <Button variant="contained" style={{ backgroundColor: '#27ae60', color: '#fff' }} fullWidth>
+                    Request
+                  </Button>
+                </form>
+              </Box>
+              
+              {/* Agent Info */}
+              <Box flex={1} p={2} borderRadius={8}>
+                <Typography variant="h6" gutterBottom style={{ color: '#000' }}>
+                  Agent Information
+                </Typography>
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid item>
+                    <Avatar src={agent_photo} alt={agent_name} />
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body1" style={{ color: '#000' }}>{agent_name}</Typography>
+                    <Box display="flex" alignItems="center" gap={1} mt={1}>
+                      <IconButton href={`https://wa.me/${agent_whatsapp}`} target="_blank" style={{ color: '#27ae60' }}>
+                        <WhatsApp />
+                      </IconButton>
+                      <IconButton href={`mailto:${agent_email}`} style={{ color: '#27ae60' }}>
+                        <Email />
+                      </IconButton>
+                      <IconButton href={`tel:${agent_phone}`} style={{ color: '#27ae60' }}>
+                        <Phone />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Box>
+          </Grid>
 
-         
           <Box p={2} bgcolor="#f0f0f0" borderRadius={8} mb={3}>
             <Typography variant="body1" paragraph style={{ color: '#000' }}>
               {property_description}

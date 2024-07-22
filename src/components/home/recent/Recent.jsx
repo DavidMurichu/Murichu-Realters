@@ -6,7 +6,9 @@ import { list, propertyData, recent } from "../../data/Data"
 import { Link } from "react-router-dom"
 import RecentCardCustom from "../../Container/RecentCardCustom"
 import { FetchData } from "../../appService/Delay"
-import SingleCardGrid from "../../Container/SingleCardGrid"
+import SingleCard from "../../Container/SingleCardGrid"
+
+
 
 
 
@@ -35,8 +37,7 @@ const Recent = () => {
 />
 
           <RecentCardCustom list={data.slice(0,6)} />
-          <SingleCardGrid list={data}/>
-          
+         <SingleCard items={data}/>
           <button className='btn1 float-right'>
           <Link to='/listings'>
             <i className='fa'></i> More Properties
