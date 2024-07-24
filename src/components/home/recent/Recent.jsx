@@ -37,7 +37,6 @@ const Recent = () => {
 />
 
           <RecentCardCustom list={data.slice(0,6)} />
-         <SingleCard items={data}/>
           <button className='btn1 float-right'>
           <Link to='/listings'>
             <i className='fa'></i> More Properties

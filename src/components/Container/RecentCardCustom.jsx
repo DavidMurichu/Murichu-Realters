@@ -3,9 +3,9 @@ import { useHistory } from 'react-router-dom';
 import { Box, Typography, Button, IconButton, Card, CardContent, CardMedia, Chip, Grid } from '@mui/material';
 import { Favorite, FavoriteBorder, Compare, CameraAlt, Delete } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/system';
-import { CompareContext } from '../appService/compareService'; // Assuming CompareContext is defined correctly
+import { CompareContext } from '../appService/compareService'; // Ensure CompareContext is correctly imported and provided
 import { ToastContainer, toast } from 'react-toastify';
-import PropertyInformationPage from './propertyCard';
+import { TenureContext } from '../appService/TenureProvider';
 
 const fadeIn = keyframes`
   from {
@@ -43,6 +43,7 @@ const StyledCard = styled(Card)`
 
 const RecentCardCustom = ({ list, handleDelete }) => {
   const { compare, setCompare } = useContext(CompareContext); // Ensure CompareContext is correctly imported and provided
+  const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
 
   const [items, setItems] = useState(list);
   const history = useHistory();
@@ -52,7 +53,9 @@ const RecentCardCustom = ({ list, handleDelete }) => {
   }, [list]);
 
   const reloadPage = () => {
+    setPropertyTenure('')
     history.go(0);
+    
   };
 
   const addCompare = (val) => {
@@ -73,6 +76,7 @@ const RecentCardCustom = ({ list, handleDelete }) => {
       state: { property: val }
     });
   };
+
   const handleImageClick = (val) => {
     history.push({
       pathname: `/view-photos/${val.id}`,
@@ -80,9 +84,6 @@ const RecentCardCustom = ({ list, handleDelete }) => {
     });
   };
 
-  const handleViewPhoto=()=>{
-
-  }
   const toggleFavourite = (id) => {
     setItems((prevItems) =>
       prevItems.map((item) =>
@@ -99,24 +100,28 @@ const RecentCardCustom = ({ list, handleDelete }) => {
           <Button onClick={reloadPage} variant="contained" color="primary" sx={{ mt: 2 }}>Reload</Button>
         </Box>
       ) : (
-        <Grid container spacing={3} mt={2} >
+        <Grid container spacing={3} mt={2}>
           {items.map((val) => (
-            <Grid item xs={12} sm={6} md={4} key={val.id}>
+            <Grid item xs={12} sm={6} md={4} key={val.id} sx={{m:{xs:3, sm:0}}}>
               <StyledCard sx={{ boxShadow: 3 }}>
                 <CardMedia
                   component="img"
-                  height="200"
                   image={val.property_images[0]}
                   alt={val.property_name}
-                  sx={{ transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.05)' } }}
+                  sx={{
+                    height: 200,
+                    objectFit: 'cover', // Ensures image covers the area and maintains aspect ratio
+                    transition: 'transform 0.3s ease',
+                    '&:hover': { transform: 'scale(1.05)' }
+                  }}
                 />
                 <CardContent>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                     <Chip
                       label={`For ${val.property_tenure}`}
                       sx={{
-                        backgroundColor: val.property_tenure === 'sale' ? '#25b5791a' : '#ff98001a',
-                        color: val.property_tenure === 'sale' ? '#25b579' : '#ff9800',
+                        backgroundColor: val.property_tenure === 'buy' ? '#25b5791a' : '#ff98001a',
+                        color: val.property_tenure === 'buy' ? '#25b579' : '#ff9800',
                       }}
                     />
                     <Button variant="outlined" color="primary" onClick={() => handleDisplay(val)}>View</Button>
@@ -129,15 +134,16 @@ const RecentCardCustom = ({ list, handleDelete }) => {
                     <i className="fa fa-location-dot" /> {val.property_address}, {val.property_city}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                    <Button variant="outlined" color="primary" style={{
+                    <Button variant="outlined" color="primary" sx={{
                       borderRadius: '20px',
                       fontSize: '15px',
                       padding: '1rem',
                       color: 'white',
                       background: '#27ae60'
                     }}>
-                      Ksh: {val.property_price}</Button>
-                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>{val.property_type}</Typography>
+                      Ksh: {val.property_price}
+                    </Button>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{val.property_type}</Typography>
                   </Box>
                 </CardContent>
                 <Box className="hover-icons">
@@ -145,21 +151,20 @@ const RecentCardCustom = ({ list, handleDelete }) => {
                     <Compare />
                     <Typography variant="caption" color="inherit">Compare</Typography>
                   </IconButton>
-                  <IconButton onClick={()=>handleImageClick(val)} sx={{ color: 'white' }}>
+                  <IconButton onClick={() => handleImageClick(val)} sx={{ color: 'white' }}>
                     <CameraAlt />
                     <Typography variant="caption" color="inherit">View Photos</Typography>
                   </IconButton>
-                 
                   <IconButton onClick={() => toggleFavourite(val.id)} sx={{ backgroundColor: val.isFavourite ? 'orange' : '#27ae60', borderRadius: 1, p: 1, color: 'white' }}>
                     <Favorite />
                     <Typography variant="caption" color="inherit">Add to Favorites</Typography>
                   </IconButton>
-                  {handleDelete? (<IconButton sx={{ color: 'white' } }   onClick={()=>handleDelete(val.id)}>
-                    <Delete />
-                    <Typography variant="caption" color="inherit">Delete</Typography>
-                  </IconButton>):(null)
-                  }
-                  
+                  {handleDelete && (
+                    <IconButton onClick={() => handleDelete(val.id)} sx={{ color: 'white' }}>
+                      <Delete />
+                      <Typography variant="caption" color="inherit">Delete</Typography>
+                    </IconButton>
+                  )}
                 </Box>
               </StyledCard>
             </Grid>

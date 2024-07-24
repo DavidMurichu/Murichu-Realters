@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Agents, Location, PropertyType, PropertyTenure, Properties, PropertyImages
+from .models import Agents, Location, PropertyType, PropertyTenure, Properties, PropertyImages, UserResponse
+
+
+class UserResponsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=UserResponse
+        fields=['id', 'name', 'email', 'phonenumber', 'message', 'property']
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,21 +70,25 @@ class PropertiesSerializer(serializers.ModelSerializer):
 class AgentGetSerializer(serializers.ModelSerializer):
     city_name = serializers.CharField(source='city.city')
     profile_image = serializers.SerializerMethodField()
+    properties_count = serializers.SerializerMethodField()
+
 
     def get_profile_image(self, obj):
         return self.context['request'].build_absolute_uri(obj.profile_image.url)
+    def get_properties_count(self, obj):
+            return Properties.objects.filter(agent=obj).count()
 
     class Meta:
         model = Agents
-        fields = ['id', 'name', 'phone', 'email', 'profile_image', 'city','city_name']
-
+        fields = ['id', 'name', 'phone', 'email', 'profile_image', 'city','city_name', 'properties_count']
+        
 
         
 class PropertyGetSerializer(serializers.ModelSerializer):
     property_city = serializers.CharField(source='property_city.city')
     property_type = serializers.CharField(source='property_type.name')
     property_tenure = serializers.CharField(source='property_tenure.name')
-    agent = serializers.CharField(source='agent.name')
+    agent = AgentGetSerializer()
     property_images = serializers.SerializerMethodField()
 
     class Meta:

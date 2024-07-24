@@ -84,3 +84,46 @@
   box-shadow: black;
   float: right;
 }
+/* General Styles for Desktop */
+.team {
+  padding: 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.box {
+  /* Styling for the cards */
+}
+
+/* Responsive Styles for Mobile */
+@media (max-width: 768px) {
+  .content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .box {
+    /* Adjust card sizes for mobile */
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .img img {
+    width: 100%;
+    height: auto;
+  }
+}

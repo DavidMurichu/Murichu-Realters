@@ -1,13 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, Navigate, useHistory } from 'react-router-dom';
-import { Box, Typography, Button, IconButton, Card, CardContent, CardMedia, Chip, Grid } from '@mui/material';
-import { Favorite, FavoriteBorder, Compare, CameraAlt, Delete } from '@mui/icons-material';
+import { useHistory } from 'react-router-dom';
+import { Box, Typography, Button, IconButton, Card, CardContent, CardMedia, Grid } from '@mui/material';
+import { Phone, WhatsApp, Email, Delete } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/system';
-import { CompareContext } from '../appService/compareService';
-import { showToast } from '../appService/Toast/Toast';
-import { ToastContainer } from 'react-toastify';
-import Maincard from '../admin/Layouts/maincard';
-import { TenureContext } from '../appService/TenureProvider';
+import { CompareContext } from '../appService/compareService'; // Ensure CompareContext is correctly imported and provided
+import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import { BASE_URL } from '../appService/Delay';
 
@@ -45,7 +42,7 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const AgentCardCustom = ({ list }) => {
+const AgentCardCustom = ({ list, isAdmin }) => {
   const { compare, setCompare } = useContext(CompareContext);
   const [items, setItems] = useState(list);
   const history = useHistory();
@@ -60,89 +57,165 @@ const AgentCardCustom = ({ list }) => {
 
   const addCompare = (val) => {
     if (compare[val.id]) {
-      showToast('Item already exists in compare', 'error');
+      toast.error('Item already exists in compare', { autoClose: 1000 });
     } else {
       setCompare((prev) => ({
         ...prev,
         [val.id]: val,
       }));
-      showToast('Item added to compare', 'success');
+      toast.success('Item added to compare');
     }
   };
 
   const handleViewPhoto = () => {};
-
- 
 
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`${BASE_URL}/agents/${id}/`, {
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`, 
         },
       });
 
       if (response.status === 204) {
-        showToast('Image deleted successfully', 'success');
+        toast.success('Agent deleted successfully');
         setItems((prevItems) => prevItems.filter((item) => item.id !== id));
       } else {
-        showToast('Failed to delete image', 'error');
+        toast.error('Failed to delete agent');
       }
     } catch (error) {
-      showToast('Error deleting image', 'error');
-      console.error('Error deleting image:', error);
+      toast.error('Error deleting agent');
+      console.error('Error deleting agent:', error);
     }
   };
 
+  const toggleFavourite = (id) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, isFavourite: !item.isFavourite } : item
+      )
+    );
+  };
+
+  if (!items || items.length === 0) {
+    return (
+      <Box sx={{ textAlign: 'center', p: 3, border: '1px solid #ccc', borderRadius: 1 }}>
+        <Typography variant="body1">No Agents with the filter.</Typography>
+        <Button onClick={reloadPage} variant="contained" color="primary" sx={{ mt: 2 }}>Reload</Button>
+      </Box>
+    );
+  }
+
   return (
     <>
-      {items.length === 0 || items === null ? (
-        <Box sx={{ textAlign: 'center', p: 3, border: '1px solid #ccc', borderRadius: 1 }}>
-          <Typography variant="body1">No Agents with the filter.</Typography>
-          <Button onClick={reloadPage} variant="contained" color="primary" sx={{ mt: 2 }}>Reload</Button>
-        </Box>
-      ) : (
-        <Grid container spacing={3} mt={2}>
+      {items.length > 1 ? (
+        <Grid container spacing={2} mt={2}>
           {items.map((val) => (
             <Grid item xs={12} sm={6} md={4} key={val.id}>
-              <StyledCard sx={{ boxShadow: 3 }}>
+              <StyledCard sx={{ boxShadow: 3, p: { xs: 1, sm: 2 } }}>
                 <CardMedia
                   component="img"
-                  height="200"
                   image={val.profile_image}
-                  alt={val.property_name}
-                  sx={{ transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.05)' } }}
+                  alt={val.name}
+                  sx={{
+                    height: { xs: 150, sm: 180, md: 200 },
+                    objectFit: 'cover',
+                    transition: 'transform 0.3s ease',
+                    '&:hover': { transform: 'scale(1.05)' }
+                  }}
                 />
-                <CardContent>
-          
-                  <Typography variant="h6">{val.name}</Typography>
-                  <Typography variant="body2" color="textSecondary" fontSize='15px'>
-                    <i className="fa fa-location-dot" /> {val.email}, {val.phone}
+                <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+                  <Typography variant="h6" noWrap sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>{val.name}</Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                    <IconButton href={`tel:${val.phone}`} sx={{ color: '#27ae60', p: 1 }}>
+                      <Phone />
+                    </IconButton>
+                    <IconButton href={`https://wa.me/${val.phone}`} sx={{ color: '#27ae60', p: 1 }}>
+                      <WhatsApp />
+                    </IconButton>
+                    <IconButton href={`mailto:${val.email}`} sx={{ color: '#27ae60', p: 1 }}>
+                      <Email />
+                    </IconButton>
+                  </Box>
+                  <Typography variant="body2" color="textSecondary" fontSize='14px' sx={{ mt: 1 }}>
+                    {val.email}, {val.phone}
                   </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                    <Button variant="outlined" color="primary" style={{
+                  <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                    <Typography variant="h6" color="primary" sx={{
                       borderRadius: '20px',
-                      fontSize: '15px',
-                      padding: '1rem',
+                      fontSize: { xs: '0.9rem', sm: '1rem' },
+                      padding: '0.5rem',
                       color: 'white',
-                      background: '#27ae60'
+                      background: '#27ae60',
+                      textAlign: 'center'
                     }}>
-                      {val.city_name}
-                    </Button>
-                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>{val.property_type}</Typography>
+                      <i className="fa fa-location-dot" /> {val.city_name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{val.property_type}</Typography>
                   </Box>
                 </CardContent>
-                <Box className="hover-icons">
-                  <IconButton onClick={() => handleDelete(val.id)} sx={{ color: 'white' }}>
-                    <Delete />
-                    <Typography variant="caption" color="inherit">Delete</Typography>
-                  </IconButton>
-                </Box>
+                {isAdmin &&
+                  <Box className="hover-icons">
+                    <IconButton onClick={() => handleDelete(val.id)} sx={{ color: 'white' }}>
+                      <Delete />
+                      <Typography variant="caption" color="inherit">Delete</Typography>
+                    </IconButton>
+                  </Box>}
               </StyledCard>
             </Grid>
           ))}
         </Grid>
+      ) : (
+        <StyledCard sx={{ boxShadow: 3, maxWidth: '100%', p: { xs: 1, sm: 2 } }}>
+          <CardMedia
+            component="img"
+            image={items[0].profile_image}
+            alt={items[0].name}
+            sx={{
+              height: { xs: 150, sm: 180, md: 200 },
+              objectFit: 'cover',
+              transition: 'transform 0.3s ease',
+              '&:hover': { transform: 'scale(1.05)' }
+            }}
+          />
+          <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+            <Typography variant="h6" noWrap sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>{items[0].name}</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+              <IconButton href={`tel:${items[0].phone}`} sx={{ color: '#27ae60', p: 1 }}>
+                <Phone />
+              </IconButton>
+              <IconButton href={`https://wa.me/${items[0].phone}`} sx={{ color: '#27ae60', p: 1 }}>
+                <WhatsApp />
+              </IconButton>
+              <IconButton href={`mailto:${items[0].email}`} sx={{ color: '#27ae60', p: 1 }}>
+                <Email />
+              </IconButton>
+            </Box>
+            <Typography variant="body2" color="textSecondary" fontSize='14px' sx={{ mt: 1 }}>
+              {items[0].email}, {items[0].phone}
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+              <Typography variant="h6" color="primary" sx={{
+                borderRadius: '20px',
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+                padding: '0.5rem',
+                color: 'white',
+                background: '#27ae60',
+                textAlign: 'center'
+              }}>
+                <i className="fa fa-location-dot" /> {items[0].city_name}
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{items[0].property_type}</Typography>
+            </Box>
+          </CardContent>
+          {isAdmin &&
+            <Box className="hover-icons">
+              <IconButton onClick={() => handleDelete(items[0].id)} sx={{ color: 'white' }}>
+                <Delete />
+                <Typography variant="caption" color="inherit">Delete</Typography>
+              </IconButton>
+            </Box>}
+        </StyledCard>
       )}
       <ToastContainer style={{ zIndex: 9999999999 }} />
     </>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Heading from "../../common/Heading";
-import { team } from "../../data/Data";
 import "./team.css";
+import { FetchData } from '../../appService/Delay';
 
 const Card = ({ data, isActive, position }) => {
   const variants = {
@@ -36,18 +36,18 @@ const Card = ({ data, isActive, position }) => {
         opacity: { duration: 0.2 },
       }}
     >
-      <button className='btn3'>{data.list} Listings</button>
+      <button className='btn3'>{data.properties_count || 0} Listings</button>
       <span className="helper-text">No of Listings</span>
       <div className='details'>
         <div className='img'>
-          <img src={data.cover} alt='' />
+          <img src={data.profile_image || 'default-image.png'} alt='' />
           <i className='fa-solid fa-circle-check'></i>
         </div>
         <i className='fa fa-location-dot'></i>
-        <label>{data.address}</label>
-        <h4>{data.name}</h4>
+        <label>{data.city_name || 'Unknown City'}</label>
+        <h4>{data.name || 'No Name'}</h4>
         <ul>
-          {data.icon.map((icon, index) => (
+          {(data.icon || []).map((icon, index) => (
             <li key={index}>{icon}</li>
           ))}
         </ul>
@@ -67,42 +67,68 @@ const Card = ({ data, isActive, position }) => {
 
 const Team = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [team, setTeam] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetch = async () => {
+    try {
+      await FetchData('get-agents', setTeam, setLoading);
+    } catch (error) {
+      console.error("Error fetching data", error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex(prevIndex => (prevIndex + 1) % team.length);
-    }, 3000);
-    return () => clearInterval(interval);
+    fetch();
   }, []);
 
+  useEffect(() => {
+    if (team.length > 0) {
+      const interval = setInterval(() => {
+        setActiveIndex(prevIndex => (prevIndex + 1) % team.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [team.length]);
+
   const getVisibleCards = () => {
-    const leftIndex = (activeIndex - 1 + team.length) % team.length;
-    const rightIndex = (activeIndex + 1) % team.length;
-    return [leftIndex, activeIndex, rightIndex];
+    if (team.length === 0) return [];
+    
+    const visibleCount = Math.min(3, team.length);
+    const indices = [];
+    
+    for (let i = 0; i < visibleCount; i++) {
+      indices.push((activeIndex + i - 1 + team.length) % team.length);
+    }
+    
+    return indices;
   };
 
   const visibleCards = getVisibleCards();
 
   return (
-    <>
-      <section className='team background'>
-        <div className='container'>
-          <Heading title='Our Featured Agents' subtitle='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.' />
-          <div className='content mtop grid3'>
+    <section className='team background'>
+      <div className='container'>
+        <Heading title='Our Featured Agents' subtitle='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.' />
+        <div className='content mtop grid3'>
+          {team.length === 0 ? (
+            <p>No agents available</p>
+          ) : (
             <AnimatePresence initial={false} custom={activeIndex}>
               {visibleCards.map((cardIndex, index) => (
                 <Card
-                  key={team[cardIndex].id}
-                  data={team[cardIndex]}
+                  key={team[cardIndex]?.id || index}
+                  data={team[cardIndex] || {}}
                   isActive={index === 1}
                   position={index - 1}
                 />
               ))}
             </AnimatePresence>
-          </div>
+          )}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 

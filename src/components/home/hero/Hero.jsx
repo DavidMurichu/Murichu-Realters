@@ -1,38 +1,36 @@
 import React from "react";
-import Heading from "../../common/Heading";
-import "./hero.css";
 import { Link } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, Button, Typography, TextField, Container, Card, CardContent } from "@mui/material";
+import "./hero.css";
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import HeroFilter from "./HeroFilter";
 
 const Hero = () => {
   return (
-    <section className="hero">
+    <Box component="section" className="hero">
       <video autoPlay muted loop id="background-video">
         <source src="/videos/hero.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      <div className="container">
-        <div className="home-search">
-          <Link to="/listings">
-            <i className="fa fa-search"></i>
-            <h3>Click here to search for properties</h3>
-          </Link>
-        </div>
-        <div className="contact-hero-card">
-          <h1 className="card-heading">
+      <Container className="container top-container ">
+        <Box className="home-search" component={Link} to="/listings" sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#27ae60', borderRadius: '20px', padding: '10px', marginBottom: '20px', color: 'white', textDecoration: 'none' }}>
+          <i className="fa fa-search" style={{ marginRight: '10px' }}></i>
+          <Typography variant="h6" component="h3" sx={{ fontSize: '1rem', margin: 0 }}>Click here to search for properties</Typography>
+        </Box>
+
+        <Card className="contact-hero-card" sx={{ display: 'flex', flexDirection: 'column', padding: '30px', backgroundColor: 'rgba(53, 43, 70, 0.795)', borderRadius: '10px', color: 'white' }}>
+          <Typography variant="h6" component="h1" className="card-heading" sx={{ fontFamily: 'Cambria, Cochin, Georgia, Times, "Times New Roman", serif', padding: '5%' }}>
             MURICHU REALTERS
-          </h1>
-          <p>
+          </Typography>
+          <Typography component="p" sx={{ fontFamily: 'Cambria, Cochin, Georgia, Times, "Times New Roman", serif', paddingLeft: '6%' }}>
             Receive updates, hot deals, tutorials, and discounts sent straight to your inbox every month.
-          </p>
-          <Link to="/contact">
-            Contact our agents
-          </Link>
-        </div>
-      </div>
-      
-    </section>
+          </Typography>
+          <Button component={Link} to="/contact" sx={{ padding: '6%', paddingTop: 0, textDecoration: 'underline', color: 'inherit' }}>Contact our agents</Button>
+        </Card>
+      </Container>
+      <HeroFilter />
+    </Box>
   );
 };
 

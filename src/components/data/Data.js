@@ -356,7 +356,7 @@ export const location = [
     cover: "./images/location/city-6.png",
   },
 ]
-export const team = [
+export const teamData = [
   {
     list: "50",
     cover: "../images/customer/team-1.jpg",

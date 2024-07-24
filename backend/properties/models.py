@@ -1,7 +1,10 @@
+from email import message
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
 import os
+
+
 
 class Location(models.Model):
     city = models.CharField(max_length=100, unique=True)
@@ -55,19 +58,12 @@ class PropertyImages(models.Model):
     property = models.ForeignKey(Properties, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to=image_file_path)  # Use the defined function for file path
 
-#     def __str__(self):
-#         return f"Image for {self.property.property_name}"
+class UserResponse(models.Model):
+    property=models.ForeignKey(Properties, on_delete=models.SET_NULL, blank=True, null=True)
+    name=models.CharField(max_length=30)
+    email=models.EmailField(blank=True)
+    phonenumber=models.CharField(max_length=13)
+    message=models.TextField(max_length=500)
 
-#     def delete(self, *args, **kwargs):
-#         # Delete the file from the filesystem when deleting the model instance
-#         if self.image:
-#             storage, path = self.image.storage, self.image.path
-#             storage.delete(path)  # This will delete the file from the storage
-#         super().delete(*args, **kwargs)
-
-# # Signal to delete file when instance is deleted
-# @receiver(post_delete, sender=PropertyImages)
-# def delete_image_file(sender, instance, **kwargs):
-#     if instance.image:
-#         instance.image.delete(False)  # False means don't save model after delete
-
+    def __str__(self):
+        return self.name

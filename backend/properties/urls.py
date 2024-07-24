@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import AgentGetViewSet, AgentsViewSet, LocationViewSet, PropertiesGetViewSet, PropertyTypeViewSet, PropertyTenureViewSet, PropertiesViewSet, PropertyImagesViewSet, get_properties, verify_token
+from .views import AgentGetViewSet, AgentsViewSet, LocationViewSet, PropertiesGetViewSet, PropertyTypeViewSet, PropertyTenureViewSet, PropertiesViewSet, PropertyImagesViewSet, UserResponseViewSet, get_properties, verify_token
 
 router = DefaultRouter()
 router.register(r'locations', LocationViewSet)
@@ -11,6 +11,7 @@ router.register(r'get-properties', PropertiesGetViewSet, basename='get-propertie
 router.register(r'property-images', PropertyImagesViewSet)
 router.register(r'agents', AgentsViewSet)
 router.register(r'get-agents', AgentGetViewSet, basename='get-agents')
+router.register(r'user-responses', UserResponseViewSet)
 
 
 urlpatterns = [

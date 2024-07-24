@@ -41,7 +41,7 @@ const Agents = () => {
       </Button>
         <div className='container recent'>
 
-          <AgentCardCustom list={filteredList}/>
+          <AgentCardCustom list={filteredList} isAdmin={true}/>
         </div>
         <ToastContainer />
       </section>

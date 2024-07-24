@@ -16,8 +16,9 @@ const Home = () => {
       <Hero />
       <Recent />
       <Featuredlink />
-      <Team />
       <Location />
+      <Team />
+
 
     </>
   )

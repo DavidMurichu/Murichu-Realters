@@ -3,6 +3,7 @@ import { Container, styled, keyframes, Box, Typography, Button, IconButton, Card
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { Favorite, FavoriteBorder, Compare, CameraAlt } from '@mui/icons-material';
 
+// Keyframe animations
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -12,7 +13,6 @@ const fadeIn = keyframes`
   }
 `;
 
-// Keyframe animations
 const slideInLeft = keyframes`
   from {
     transform: translateX(-100%);
@@ -59,10 +59,17 @@ const StyledCard = styled(Card)`
   animation: ${fadeIn} 1s ease-in-out;
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%; // Adjust width to be responsive
+  height: auto; // Adjust height to be responsive
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
+
   .hover-icons {
     display: none;
     position: absolute;
@@ -74,6 +81,7 @@ const StyledCard = styled(Card)`
     border-radius: 4px;
     transition: opacity 0.3s ease;
   }
+
   &:hover .hover-icons {
     display: flex;
     opacity: 1;
@@ -83,26 +91,50 @@ const StyledCard = styled(Card)`
 const CarouselContainer = styled(Box)`
   position: relative;
   width: 100%;
-  height: 100%;
+  height: auto;
+  overflow: hidden;
+
   &:hover .navigation-buttons {
     opacity: 1;
   }
 `;
 
-const NavigationButton = styled(Button)`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-`;
+const NavigationButton = styled(Button)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  zIndex: 10, // Ensure the buttons are above other content
+  borderRadius: '50%',
+  width: '40px',
+  height: '40px',
+  minWidth: 'unset',
+  padding: 0,
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+  transition: 'background-color 0.3s ease, transform 0.3s ease',
+
+  '&:hover': {
+    backgroundColor: '#ffffff',
+    transform: 'scale(1.1)',
+  },
+
+  '& svg': {
+    fontSize: '24px',
+    color: '#333',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    width: '35px',
+    height: '35px',
+  },
+}));
 
 const PrevButton = styled(NavigationButton)`
-  left: 0;
+  left: 10px;
 `;
 
 const NextButton = styled(NavigationButton)`
-  right: 0;
+  right: 10px;
 `;
 
 const Carousel = ({ items }) => {
@@ -136,9 +168,9 @@ const Carousel = ({ items }) => {
   useEffect(() => {
     const autoSlideInterval = setInterval(() => {
       handleNext();
-    }, 3000); // Adjust the time interval as needed (3000 ms = 3 seconds)
+    }, 3000);
 
-    return () => clearInterval(autoSlideInterval); // Clean up on component unmount
+    return () => clearInterval(autoSlideInterval);
   }, [handleNext]);
 
   return (
@@ -151,12 +183,18 @@ const Carousel = ({ items }) => {
                 <StyledCard sx={{ boxShadow: 3 }}>
                   <CardMedia
                     component="img"
-                    height="200"
+                    height="150"
                     image={item.property_images ? item.property_images[0] : 'default-image.jpg'}
                     alt={item.property_name || 'Default Name'}
-                    sx={{ transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.05)' } }}
+                    sx={{
+                      objectFit: 'cover',
+                      height: '150px',
+                      width: '100%',
+                      transition: 'transform 0.3s ease',
+                      '&:hover': { transform: 'scale(1.05)' }
+                    }}
                   />
-                  <CardContent>
+                  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                       <Chip
                         label={`For ${item.property_tenure || 'N/A'}`}
@@ -170,21 +208,10 @@ const Carousel = ({ items }) => {
                         {item.isFavourite ? <Favorite sx={{ color: 'orange' }} /> : <FavoriteBorder sx={{ color: 'white' }} />}
                       </IconButton>
                     </Box>
-                    <Typography variant="h6">{item.property_name || 'Default Name'}</Typography>
-                    <Typography variant="body2" color="textSecondary" fontSize='15px'>
-                      <i className="fa fa-location-dot" /> {item.property_address || 'N/A'}, {item.property_city || 'N/A'}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                      <Button variant="outlined" color="primary" style={{
-                        borderRadius: '20px',
-                        fontSize: '15px',
-                        padding: '1rem',
-                        color: 'white',
-                        background: '#27ae60'
-                      }}>
-                        Ksh: {item.property_price || 'N/A'}
-                      </Button>
-                      <Typography variant="body2" style={{ fontWeight: 'bold' }}>{item.property_type || 'N/A'}</Typography>
+                    <Box display={'flex'} padding={0} justifyContent={'space-between'}>
+                      <Typography variant="h6" noWrap>{item.property_name || 'Default Name'}</Typography>
+                      <Typography variant="body2" noWrap>ksh: {item.property_price || 'Default price'}</Typography>
+                      <Typography variant="h6" noWrap>{item.property_city || 'Default City'}</Typography>
                     </Box>
                   </CardContent>
                   <Box className="hover-icons">
@@ -220,7 +247,6 @@ const Carousel = ({ items }) => {
 
 // Example usage
 const SingleCard = ({ items }) => {
-  // Ensure items is an array before passing it to Carousel
   const validItems = Array.isArray(items) ? items : [];
   
   return <Carousel items={validItems} />;

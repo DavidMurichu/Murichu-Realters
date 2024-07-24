@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Agents, Location, PropertyType, PropertyTenure, Properties, PropertyImages
-from .serializer import AgentGetSerializer, AgentSerializer, LocationSerializer, PropertyGetSerializer, PropertyTypeSerializer, PropertyTenureSerializer, PropertiesSerializer, PropertyImagesSerializer
+from .models import Agents, Location, PropertyType, PropertyTenure, Properties, PropertyImages, UserResponse
+from .serializer import AgentGetSerializer, AgentSerializer, LocationSerializer, PropertyGetSerializer, PropertyTypeSerializer, PropertyTenureSerializer, PropertiesSerializer, PropertyImagesSerializer, UserResponsSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -9,6 +9,11 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.conf import settings
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
+
+class UserResponseViewSet(viewsets.ModelViewSet):
+    queryset=UserResponse.objects.all()
+    serializer_class=UserResponsSerializer
+
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
