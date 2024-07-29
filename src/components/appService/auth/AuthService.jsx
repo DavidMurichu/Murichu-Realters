@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '../Delay';
 
 const AuthContext = createContext();
 
@@ -13,7 +14,7 @@ const AuthProvider = ({ children }) => {
           console.log('response')
 
           // Send a request to your backend to validate the token
-          const response = await axios.post('http://127.0.0.1:8000/api/verify-token', {
+          const response = await axios.post(BASE_URL+'verify-token', {
             token,
           });
           console.log('response', response)
@@ -42,7 +43,7 @@ const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login', {
+      const response = await axios.post(BASE_URL+'login', {
         username,
         password,
       });

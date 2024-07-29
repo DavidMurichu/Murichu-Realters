@@ -4,6 +4,9 @@ import "../home/recent/recent.css";
 import AdvancedFilter from "../filter/AdvanceFilter";
 import { FetchData } from "../appService/Delay";
 import SingleCard from "../Container/SingleCardGrid";
+import { styled } from '@mui/material/styles';
+import { Box, Grid, Typography } from "@mui/material";
+
 
 const Listings = () => {
   const [propertyData, setPropertyData] = useState([]);
@@ -18,6 +21,16 @@ const Listings = () => {
     fetch();
   }, []);
 
+
+  const StyledTitle = styled(Typography)`
+  font-size: 1.5rem; /* Adjust the font size */
+  font-weight: 700; /* Make the text bold */
+  color: black; /* Dark grey color for better readability */
+  margin-bottom: 1rem; /* Add space below the text */
+  text-align: center; /* Center align the text */
+ 
+`;
+
   return (
     <section className='blog-out mb' style={{ maxWidth: '100%' }}>
       <AdvancedFilter data={propertyData} onFilterUpdate={setFilteredList} />
@@ -25,6 +38,16 @@ const Listings = () => {
         
         <RecentCardCustom list={filteredList} />
       </div>
+      <Box className='footerContact' justifyContent='center'>
+      <StyledTitle>
+    Similar Properties
+        </StyledTitle>
+
+        <Grid container className='container' justifyContent="center" alignItems="center">
+       
+          <SingleCard items={propertyData || []} /> {/* Ensure items is an array */}
+        </Grid>
+      </Box>
     </section>
 
   );

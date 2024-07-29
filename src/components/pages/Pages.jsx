@@ -28,6 +28,7 @@ import { TenureProvider } from '../appService/TenureProvider';
 import AddAgentForm from '../admin/dashboard/Agents/addAgent';
 import Agents from '../admin/dashboard/Agents';
 import AuthProvider, { useAuth } from '../appService/auth/AuthService';
+import AgentProperties from '../home/team/AgentProperties';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const { isAuthenticated } = useAuth();
@@ -100,6 +101,7 @@ const Pages = () => {
                     <Route exact path="/contact" component={Contact} />
                     <Route exact path="/property-details/:id" component={PropertyInformationPage} />
                     <Route exact path="/view-photos/:id" component={ImageViewer} />
+                    <Route exact path="/agent-details" component={AgentProperties} />
                   </Switch>
                   <Footer />
                 </Route>

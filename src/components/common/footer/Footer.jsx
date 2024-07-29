@@ -9,14 +9,7 @@ import { DataContext } from "../../appService/data/DataProvider";
 import { styled } from '@mui/material/styles';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const Footer = () => {
-  const StyledTitle = styled(Typography)`
-  font-size: 1.5rem; /* Adjust the font size */
-  font-weight: 700; /* Make the text bold */
-  color: black; /* Dark grey color for better readability */
-  margin-bottom: 1rem; /* Add space below the text */
-  text-align: center; /* Center align the text */
  
-`;
   const { data } = useContext(DataContext); // Access data from the context
   console.log('context',data);
 // Styled Container for Subscribe Section
@@ -53,15 +46,7 @@ const StyledButton = styled(Button)`
 `;
   return (
     <>
-      <Box className='footerContact'>
-      <StyledTitle>
-    Similar Properties
-  </StyledTitle>
-
-        <Grid container className='container' justifyContent="center" alignItems="center">
-          <SingleCard items={data || []} /> {/* Ensure items is an array */}
-        </Grid>
-      </Box>
+     
 
       <footer>
         <div className='container'>

@@ -4,7 +4,7 @@ const Heading = ({ title, subtitle }) => {
   return (
     <>
     <div className='heading'>
-      <h1>{title}</h1>
+      <h5>{title}</h5>
       <p>{subtitle}</p>
     </div>
   </>

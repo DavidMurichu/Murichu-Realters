@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Heading from "../../common/Heading";
 import "./style.css";
 import { FetchData } from "../../appService/Delay";
+import LocationCarousel from "./animation";
 
 const processPropertyData = (data) => {
     const cityData = {};
@@ -63,23 +64,10 @@ const Location = () => {
                 <Heading 
                     title='Explore By Location' 
                     subtitle='Discover the best properties in your desired area. Browse through different neighborhoods and find the perfect home for you.' 
+                    style={{margin:'2px'}}
                 />
-                <div className='content grid3 mtop'>
-                    {location.map((item, index) => (
-                        <div className='box' key={index}>
-                            <img src={item.cover} alt={item.name} />
-                            <div className='overlay'>
-                                <h5>{item.name}</h5>
-                                <p>
-                                    {Object.entries(item.propertyTypes).map(([type, count]) => (
-                                        <label key={type}>{type}: {count}</label>
-                                    ))}
-                                </p>
-                                <p>Total Properties: {item.propertyCount}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <LocationCarousel items={location} />
+              
             </div>
         </section>
     );

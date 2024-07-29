@@ -71,25 +71,46 @@ class AgentGetSerializer(serializers.ModelSerializer):
     city_name = serializers.CharField(source='city.city')
     profile_image = serializers.SerializerMethodField()
     properties_count = serializers.SerializerMethodField()
-
-
-    def get_profile_image(self, obj):
-        return self.context['request'].build_absolute_uri(obj.profile_image.url)
-    def get_properties_count(self, obj):
-            return Properties.objects.filter(agent=obj).count()
+    properties = serializers.SerializerMethodField()
 
     class Meta:
         model = Agents
-        fields = ['id', 'name', 'phone', 'email', 'profile_image', 'city','city_name', 'properties_count']
-        
+        fields = ['id', 'name', 'phone', 'email', 'city_name', 'profile_image', 'properties_count', 'properties']
 
-        
+    def get_profile_image(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.profile_image.url) if request else obj.profile_image.url
+
+    def get_properties_count(self, obj):
+        return Properties.objects.filter(agent=obj).count()
+
+    def get_properties(self, obj):
+        properties = Properties.objects.filter(agent=obj)
+        return PropertyGetSerializer(properties, many=True, context=self.context).data
+
+class PropertyAgentGetSerializer(serializers.ModelSerializer):
+    city_name = serializers.CharField(source='city.city')
+    profile_image = serializers.SerializerMethodField()
+    properties_count = serializers.SerializerMethodField()
+   
+
+    class Meta:
+        model = Agents
+        fields = ['id', 'name', 'phone', 'email', 'city_name', 'profile_image', 'properties_count']
+
+    def get_profile_image(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.profile_image.url) if request else obj.profile_image.url
+
+    def get_properties_count(self, obj):
+        return Properties.objects.filter(agent=obj).count()
+
 class PropertyGetSerializer(serializers.ModelSerializer):
     property_city = serializers.CharField(source='property_city.city')
     property_type = serializers.CharField(source='property_type.name')
     property_tenure = serializers.CharField(source='property_tenure.name')
-    agent = AgentGetSerializer()
     property_images = serializers.SerializerMethodField()
+    agent = serializers.SerializerMethodField()
 
     class Meta:
         model = Properties
@@ -98,6 +119,8 @@ class PropertyGetSerializer(serializers.ModelSerializer):
     def get_property_images(self, obj):
         images = PropertyImages.objects.filter(property=obj)
         request = self.context.get('request')
-        if request is not None:
-            return [request.build_absolute_uri(image.image.url) for image in images]
-        return [image.image.url for image in images]
+        return [request.build_absolute_uri(image.image.url) for image in images] if request else [image.image.url for image in images]
+
+    def get_agent(self, obj):
+        return PropertyAgentGetSerializer(obj.agent, context=self.context).data
+    

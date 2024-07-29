@@ -102,10 +102,7 @@ export const navigationData = [
   },
  
   
-  {
-    text: "listings",
-    path: "/listings",
-  },
+ 
   {
     text: "about",
     path: "/about",

@@ -3,8 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Heading from "../../common/Heading";
 import "./team.css";
 import { FetchData } from '../../appService/Delay';
+import { useHistory } from 'react-router-dom';
+
+
 
 const Card = ({ data, isActive, position }) => {
+  const navigate = useHistory();
+  const handleCardClick = (agentdata) => {
+    console.log('agent', agentdata);
+    navigate.push({
+      pathname: `/agent-details`,
+
+      state: { data: agentdata },
+    
+  })};
+
   const variants = {
     enter: (direction) => ({
       x: direction > 0 ? 300 : -300,
@@ -25,14 +38,16 @@ const Card = ({ data, isActive, position }) => {
 
   return (
     <motion.div
+      onClick={() => handleCardClick(data)}
       className={`box ${isActive ? 'active' : 'inactive'}`}
       custom={position}
       variants={variants}
+      cursor= 'pointer'
       initial="enter"
       animate="center"
       exit="exit"
       transition={{
-        x: { type: "spring", stiffness: 300, damping: 30 },
+        x: { type: 'spring', stiffness: 300, damping: 30 },
         opacity: { duration: 0.2 },
       }}
     >
@@ -52,13 +67,27 @@ const Card = ({ data, isActive, position }) => {
           ))}
         </ul>
         <div className='button flex'>
-          <button className="btn-s">
-            <i className='fa fa-envelope'></i>
-            <h6>Message</h6>
-          </button>
-          <button className='btn-s btn-hover' style={{ background: 'black' }}>
-            <i className='fa fa-phone-alt'></i>
-          </button>
+          <a 
+            href={`https://wa.me/${data.phone}`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none' }}
+          >
+            <button className="btn-s">
+              <i className='fa fa-envelope'></i>
+              <h6>Message</h6>
+            </button>
+          </a>
+          <a 
+            href={`tel:${data.phone}`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none' }}
+          >
+            <button className='btn-s btn-hover' style={{ background: 'black' }}>
+              <i className='fa fa-phone-alt'></i>
+            </button>
+          </a>
         </div>
       </div>
     </motion.div>

@@ -15,30 +15,10 @@ import { useHistory } from 'react-router-dom';
 
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { FetchData } from '../../appService/Delay';
 
-const BASE_URL = 'http://127.0.0.1:8000/api';
 
-const fetchData = async (endpointPath, setData, setLoading) => {
-  try {
-    setLoading(true);
-    const response = await axios.get(`${BASE_URL}/${endpointPath}/`);
-    console.log('response', response.data);
 
-    setData(Array.isArray(response.data) 
-      ? response.data.map(item => ({ ...item, selected: false })) 
-      : []
-    );
-
-    
-    
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    toast.error('Failed to fetch data. Please try again.'); // Notify user of error
-    setData([]); // Clear data on error
-  } finally {
-    setLoading(false);
-  }
-};
 
 
 const TableTemplate = ({ columns, endpoint, buttons = [], checkboxes = [], refresh=null }) => {
@@ -48,9 +28,11 @@ const TableTemplate = ({ columns, endpoint, buttons = [], checkboxes = [], refre
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectAll, setSelectAll] = useState(false);
-
+  const fetch=async()=>{
+    await FetchData(endpoint, setData, setLoading);
+  }
   useEffect(() => {
-   fetchData(endpoint, setData, setLoading);
+   fetch();
   }, [endpoint,refresh]);
 
   const handleChangePage = (event, newPage) => {

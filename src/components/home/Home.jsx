@@ -10,16 +10,14 @@ import LinkCard from "../Container/LinkCard"
 import { Box } from "@mui/material"
 import Featuredlink from "./FeatureLink"
 
+
 const Home = () => {
   return (
     <>
       <Hero />
-      <Recent />
       <Featuredlink />
       <Location />
       <Team />
-
-
     </>
   )
 }

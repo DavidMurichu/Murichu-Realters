@@ -37,6 +37,7 @@ const HeroFilter = () => {
             .sort((a, b) => a.property_city.localeCompare(b.property_city));
 
         setFilteredProperties(filtered);
+        console.log(filteredProperties)
     };
 
     const handleRemoveProperty = (id) => {
@@ -45,24 +46,29 @@ const HeroFilter = () => {
         );
     };
 
-    const handleDisplay = (val) => {
-        history.push({
-            pathname: `/property-details/${val.id}`,
-            state: { property: val }
-        });
-    };
+   
     const handleItemClick = async (payload, path) => {
         if (payload) {
           await setPropertyTenure(payload);
         }
         history.push(path);
       };
-
+    const handleDisplay = (val) => {
+        history.push({
+          pathname: `/property-details/${val.id}`,
+          state: { property: val },
+        });
+      };
+    
     return (
         <>
-            <Container className="search-container" style={{ backgroundColor: '#fff', padding: '16px' }}>
-                <Box className="search-box" display="flex" flexDirection={{ xs: 'column', sm: 'row' }}>
+            <Container className="search-container" style={{background:'none', padding: '16px' }}>
+                <Box className="search-box" display="flex" flexDirection={{ xs: 'column', sm: 'row' }}  justifyContent="center"
+                
+                
+                >
                     <TextField 
+                        sx={{background:'#fff', border:'none', height:'10%'}}
                         className="location-input"
                         placeholder="Search by location"
                         InputProps={{
@@ -86,26 +92,32 @@ const HeroFilter = () => {
                         >Rent</Button>
                     </Box>
                 </Box>
-            </Container>
-            {searchTerm !== '' &&
+                {searchTerm !== '' &&
                 <Container style={{ backgroundColor: '#fff', position: 'relative', zIndex: 2 }}>
-                    <Box mt={2}>
+                    <Box sx={{ maxHeight: '400px', overflowY: 'auto' }}>
                         {filteredProperties.length > 0 ? (
                             <List>
                                 {filteredProperties.map((property) => (
                                     <ListItem
-                                        key={property.id}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            borderBottom: '1px solid #ddd',
-                                            padding: '10px',
-                                            '&:last-child': {
-                                                borderBottom: 'none',
-                                            },
-                                            flexDirection: { xs: 'row', sm: 'row' }
-                                        }}
-                                    >
+                                    onClick={() => handleDisplay(property)}
+                                    onKeyDown={(e) => e.stopPropagation()}
+                                    onKeyUp={(e) => e.stopPropagation()}
+                                    onKeyPress={(e) => e.stopPropagation()}
+                                    role="button"
+                                    tabIndex={0}
+                                    key={property.id}
+                                    sx={{
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        borderBottom: '1px solid #ddd',
+                                        padding: '10px',
+                                        '&:last-child': {
+                                            borderBottom: 'none',
+                                        },
+                                        flexDirection: { xs: 'row', sm: 'row' }
+                                    }}
+                                >
                                         <Box
                                             sx={{
                                                 flexShrink: 0,
@@ -123,23 +135,16 @@ const HeroFilter = () => {
                                             />
                                         </Box>
                                         <Box sx={{ flexGrow: 1 }}>
-                                            <Typography variant="subtitle1" component="div">
+                                            <Typography variant="subtitle1" component="div" style={{color:'black'}}>
                                                 {property.property_city}<br />
                                                 {property.property_address}
                                             </Typography>
-                                            <Typography variant="subtitle1" color="div">
+                                            <Typography variant="subtitle1" color='black'>
                                                 Ksh: {property.property_price}
                                             </Typography>
                                         </Box>
                                         <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} sx={{ ml: 2 }}>
-                                            <Button
-                                                variant="outlined"
-                                                color="error"
-                                                onClick={() => handleRemoveProperty(property.id)}
-                                                sx={{ mb: { xs: 1, sm: 0 }, mr: { sm: 2 } }}
-                                            >
-                                                Cancel
-                                            </Button>
+                                            
                                             <Button
                                                 variant="outlined"
                                                 color="primary"
@@ -161,6 +166,8 @@ const HeroFilter = () => {
                     </Box>
                 </Container>
             }
+            </Container>
+            
         </>
     );
 };

@@ -1,20 +1,45 @@
 import React, { useContext, useEffect, useState } from 'react';
 import './AdvancedFilter.css';
-import { InputLabel, MenuItem, Select, Grid, useMediaQuery, useTheme, TextField, Typography, Slider } from '@mui/material';
+import { InputLabel, MenuItem, Select, Grid, useMediaQuery, useTheme, TextField, Autocomplete, Slider, Box } from '@mui/material';
 import { TenureContext } from '../appService/TenureProvider';
+import { styled } from '@mui/system';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
+const StyledTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '20px',
+    '& fieldset': {
+      borderColor: '#27ae60',
+    },
+    '&:hover fieldset': {
+      borderColor: '#27ae60',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#27ae60',
+    },
+  },
+});
 const getUniqueValues = (list, key) => {
   return [...new Set(list.map(item => item[key]))];
 };
 
 const AdvanceFilter = ({ data, onFilterUpdate }) => {
-  const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
+  const { propertyTenure, setPropertyTenure,location, setLocation } = useContext(TenureContext);
+  const [options, setOptions]=useState([]);
   
+  useEffect(() => {
+    const transformedOptions = data.map((propertyinfo) => ({
+      label: `${propertyinfo.property_city}, ${propertyinfo.property_address}`,
+    }));
+    setOptions(transformedOptions);
+  }, [data]);
+  
+
   // Set initial slider values based on tenure
   const initialSliderValue = propertyTenure === 'buy' ? 1000000000 : 100000;
   const initialPriceMin = propertyTenure === 'buy' ? 500000 : 10000;
   
-  const [location, setLocationChange] = useState("");
+  // const [location, setLocation] = useState("");
   const [property, setPropertyChange] = useState("");
   const [bedrooms, setBedroomsChange] = useState("");
   const [sliderValue, setSliderValue] = useState(initialSliderValue);
@@ -29,12 +54,10 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
   };
 
   const handleLocationChange = (event) => {
-    setLocationChange(event.target.value);
+    setLocation(event.target.value);
   };
 
-  const handleSliderChange = (event, newValue) => {
-    setSliderValue(newValue);
-  };
+  
 
   const handleTenureClick = (tenure) => {
     setPropertyTenure(tenure);
@@ -64,7 +87,7 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
     const filtered = data.filter(item => {
       const matchesCategory = !propertyTenure || item.property_tenure === propertyTenure;
       const matchesType = !property || item.property_type === property;
-      const matchesLocation = !location || item.property_city === location;
+      const matchesLocation = !location || item.property_city.toLowerCase().includes(location.toLowerCase());
       const matchesBedrooms = !bedrooms || item.property_bedrooms === parseInt(bedrooms);
       const matchesMinPrice = !priceMin || item.property_price >= priceMin;
       const matchesMaxPrice = !sliderValue || item.property_price <= sliderValue;
@@ -77,6 +100,7 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+  
   return (
     <div className="card">
       <div className='tenure-filter'>
@@ -101,6 +125,7 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
           </li>
         </ul>
       </div>
+     
       <Grid
         className="dropdown-container"
         container
@@ -124,7 +149,7 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
         </Grid>
 
         <Grid item>
-          <Select
+          {/* <Select
             value={location}
             onChange={handleLocationChange}
             displayEmpty
@@ -136,7 +161,8 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
             {locations.map((location, index) => (
               <MenuItem key={index} value={location}>{location}</MenuItem>
             ))}
-          </Select>
+          </Select> */}
+         
         </Grid>
 
         <Grid item>
@@ -156,26 +182,42 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
             ))}
           </Select>
         </Grid>
+        <Grid item>
+        <Autocomplete
+        options={options}
+        getOptionLabel={(option) => option.label}
+        renderInput={(params) => <TextField
+          {...params}
+  
+          sx={{
+            margin:'1%',
+             borderRadius:'2rem',
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'black',
+            },
+            
+            '&.Mui-focused fieldset': {
+              borderColor: 'black',
+            },
+          },
+          }}
+          placeholder='Search by location'
+          InputProps={{
+            startAdornment: (
+                <LocationOnIcon style={{ marginRight: '10px', color: '#27ae60' }} />
+            ),
+        }}
+          />
+  
+          }
+        
+        >
+        </Autocomplete>  
+        
+      </Grid>
       </Grid>
 
-      <div className="">
-        <Typography
-          variant={isSmallScreen ? "body2" : "body1"}
-          className="slider-value"
-        >
-          Price: Ksh {priceMin.toLocaleString()} - {sliderValue.toLocaleString()}
-        </Typography>
-
-        <Slider
-          min={propertyTenure === 'buy' ? 500000 : 10000}
-          max={propertyTenure === 'buy' ? 1000000000 : 100000}
-          value={sliderValue}
-          onChange={handleSliderChange}
-          valueLabelDisplay="auto"
-          className="size-slider"
-          style={{ width: isSmallScreen ? '100%' : '50%' }}
-        />
-      </div>
       <Grid
         container
         direction={isSmallScreen ? 'column' : 'row'}
@@ -191,7 +233,7 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
             onChange={handleMinPrice}
           />
         </Grid>
-
+        
         <Grid item className='price-input'>
           <InputLabel htmlFor='max-price'>Max Price:</InputLabel>
           <TextField

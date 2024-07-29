@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useEffect } from 'react';
+import { BASE_URL } from '../Delay';
 
-const BASE_URL='http://127.0.0.1:8000/api'
+
 
 class ApiService{
 

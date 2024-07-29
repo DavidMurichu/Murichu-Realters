@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '../Delay';
 
 const useFetchData = (endpointPath, dependencies = []) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const apiUrl = "http://127.0.0.1:8000/api";
+  const apiUrl = BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {

@@ -2,21 +2,10 @@
 
 .hero {
   position: relative;
-  height: auto;
+  justify-content: center;
+  min-height: 80vh;
   width: 100%;
   overflow: hidden;
-}
-.hero .top-container {
-  position: relative;
-  z-index: 2; /* Ensure container is above the overlay */
-  margin-top: -10%; /* Negative margin to move up */
-  display: flex;
-  flex-direction: row; /* Ensure children stack vertically */
-  align-items: center; /* Center children horizontally */
-  color: white;
-  width: 100%;
-  max-height: 100%; /* Prevent the container from exceeding the hero section height */
-  overflow: hidden; /* Prevent overflow */
 }
 
 .hero::after {
@@ -46,77 +35,12 @@
   z-index: 2; /* Ensure container is above the overlay */
   padding-top: 15%;
   display: flex;
+  justify-content: center;
   align-items: center;
   color: white;
 }
 
-.hero h1 {
-  color: #fff;
-  text-decoration: underline; /* Underline for h1 */
-}
 
-.hero p {
-  color: #fff;
-  opacity: 0.8;
-}
-
-/* Search Section Styles */
-
-.home-search {
-  width: fit-content;
-  max-width: 100%;
-  background: #27ae60;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 20px; /* Space between sections */
-}
-
-.home-search a {
-  display: flex;
-  align-items: center;
-  color: white; /* White text color */
-}
-
-.home-search a i {
-  margin-right: 10px;
-}
-
-.home-search a h3 {
-  font-size: 1rem;
-  margin: 0; /* Remove default margin */
-}
-
-/* Contact Card Styles */
-
-.contact-hero-card {
-  display: flex;
-  width: 50%;
-  margin: 5%;
-  flex-direction: column;
-  padding: 30px;
-  background-color: rgba(53, 43, 70, 0.795); /* Semi-transparent background */
-  border-radius: 10px;
-  color: #fff;
-}
-
-.contact-hero-card a {
-  padding: 6%;
-  padding-top: 0;
-  text-decoration: underline; /* Underline for link */
-  color: inherit; /* Inherit text color from parent */
-}
-
-.contact-hero-card h1{
-  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-  padding: 5%;
-}
-.contact-hero-card p{
-  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-  padding-left: 6%;
-}
-/* Responsive Styles */
 
 @media (max-width: 800px) {
   .hero .container {

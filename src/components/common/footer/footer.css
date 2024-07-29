@@ -58,6 +58,7 @@ footer ul li {
 @media screen and (max-width: 800px) {
   footer .container {
     grid-template-columns: repeat(1, 1fr);
+    margin: auto;
   }
   .input{
     flex-direction: column;
