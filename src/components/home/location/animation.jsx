@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
-import { Container, styled, keyframes, Box, Typography, Button, Card, CardContent, CardMedia, Grid, Link } from '@mui/material';
-import { ArrowBack, ArrowForward, Home, Business, LocationCity } from '@mui/icons-material';
-import { TenureContext } from '../../appService/TenureProvider';
+import { Container, styled, keyframes, Box, Typography, Button, Card, CardContent, CardMedia, Grid } from '@mui/material';
+import { ArrowBack, ArrowForward, Home, Business } from '@mui/icons-material';
 import { useHistory } from 'react-router-dom';
+import { TenureContext } from '../../appService/TenureProvider';
+import { useMediaQuery, useTheme } from '@mui/material';
 import { toast } from 'react-toastify';
 
 const slideInLeft = keyframes`
@@ -110,11 +111,13 @@ const NextButton = styled(NavigationButton)`
 `;
 
 const LocationCarousel = ({ items }) => {
-  const history=useHistory();
+  const history = useHistory();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const itemsToShow = isSmallScreen ? 1 : 3;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState('next');
-  const itemsToShow = 3;
-  const {location, setLocation}=useContext(TenureContext);
+  const { setLocation } = useContext(TenureContext);
 
   const handleNext = useCallback(() => {
     setDirection('next');
@@ -144,16 +147,14 @@ const LocationCarousel = ({ items }) => {
       handleNext();
     }, 3000);
 
-
     return () => clearInterval(autoSlideInterval);
   }, [handleNext]);
 
-  const setRedirect=(val)=>{
+  const setRedirect = (val) => {
     setLocation(val);
-    toast.success(location);
+    toast.success(val);
     history.push('/listings');
   }
-  
 
   return (
     <Container>
@@ -161,7 +162,7 @@ const LocationCarousel = ({ items }) => {
         <AnimatedBox direction={direction}>
           <Grid container spacing={2}>
             {getVisibleItems().map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index} onClick={()=>setRedirect(item.name)}>
+              <Grid item xs={12} sm={6} md={4} key={index} onClick={() => setRedirect(item.name)}>
                 <StyledCard>
                   <CardMedia
                     component="img"

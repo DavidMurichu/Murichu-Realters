@@ -8,6 +8,7 @@ import SingleCard from "../../Container/SingleCardGrid";
 import { DataContext } from "../../appService/data/DataProvider";
 import { styled } from '@mui/material/styles';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Link } from "react-router-dom";
 const Footer = () => {
  
   const { data } = useContext(DataContext); // Access data from the context
@@ -77,7 +78,8 @@ const StyledButton = styled(Button)`
               <h3>{val.title}</h3>
               <ul>
                 {val.text.map((items, idx) => (
-                  <li key={idx}> {items.list} </li>
+                  <Link to={items.to}> <li key={idx}> {items.list} </li> </Link>
+                 
                 ))}
               </ul>
             </div>

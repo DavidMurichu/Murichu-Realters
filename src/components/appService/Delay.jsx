@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-export const BASE_URL = 'http://127.0.0.1:8000/api';
+export const BASE_URL = 'https://danilo6789bhh.pythonanywhere.com/api';
 
 
 export const Delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -25,4 +25,17 @@ export const FetchData = async (endpointPath, setData, setLoading) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  export const formatPrice = (price) => {
+    if (price >= 1_000_000_000) {
+      return `${(price / 1_000_000_000).toFixed(1)}B`;
+    }
+    if (price >= 1_000_000) {
+      return `${(price / 1_000_000).toFixed(1)}M`;
+    }
+    if (price >= 1_000) {
+      return `${(price / 1_000).toFixed(1)}K`;
+    }
+    return price.toString();
   };

@@ -54,9 +54,7 @@ const Location = () => {
         }
     }, [data]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+  
 
     return (
         <section className='location padding'>

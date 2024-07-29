@@ -12,7 +12,7 @@ const HeroFilter = () => {
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredProperties, setFilteredProperties] = useState([]);
-    const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
+    const { propertyTenure, setPropertyTenure, location, setLocation } = useContext(TenureContext);
 
     const history = useHistory();
 
@@ -27,6 +27,8 @@ const HeroFilter = () => {
     const handleSearchChange = (event) => {
         const term = event.target.value.toLowerCase();
         setSearchTerm(term);
+        setLocation(term);
+        
 
         // Filter properties based on search term
         const filtered = properties

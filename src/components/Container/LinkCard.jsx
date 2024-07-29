@@ -71,16 +71,18 @@ const ResponsiveAvatar = styled(Avatar)`
   }
 `;
 
-const LinkCard = ({ avatarSrc, title, subtitle, buttontext, tenure }) => {
+const LinkCard = ({ avatarSrc, title, subtitle, buttontext, tenure, buttonurl=null }) => {
   const history = useHistory();
   // const [activeTenure, setActiveTenure] = useContext(TenureContext);
   const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
 
 
   const handleButtonClick = () => {
-
+    if(buttonurl){
+      history.push(buttonurl)
+      return
+    }
     setPropertyTenure(tenure);
-    toast.success(propertyTenure);
     history.push('/listings');
   };
 

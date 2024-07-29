@@ -1,25 +1,38 @@
-import React from "react"
-import Awards from "./awards/Awards"
-import Featured from "./featured/Featured"
-import Hero from "./hero/Hero"
-import Location from "./location/Location"
-import Price from "./price/Price"
-import Recent from "./recent/Recent"
-import Team from "./team/Team"
-import LinkCard from "../Container/LinkCard"
-import { Box } from "@mui/material"
-import Featuredlink from "./FeatureLink"
+import React, { Suspense, lazy } from 'react';
+import { Box } from '@mui/material';
+import LoadingSpinner from '../Loader';
+import { Delay } from '../appService/Delay';
 
+
+
+const Hero = lazy(() => import('./hero/Hero'));
+
+const Featuredlink = lazy(() => import('./FeatureLink'));
+
+const Location = lazy(() => import('./location/Location'));
+
+
+const Team = lazy(() => import('./team/Team'));
 
 const Home = () => {
   return (
-    <>
-      <Hero />
-      <Featuredlink />
-      <Location />
-      <Team />
-    </>
-  )
-}
+    <Box>
+      <Suspense fallback={<LoadingSpinner  />}>
+        <Hero />
+      </Suspense>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Featuredlink />
+      </Suspense>
+      <Suspense fallback={<LoadingSpinner  />}>
+        <Location />
+      </Suspense>
+      <Suspense fallback={<LoadingSpinner message="Loading Team..." />}>
+        <Team />
+      </Suspense>
+     
 
-export default Home
+    </Box>
+  );
+};
+
+export default Home;

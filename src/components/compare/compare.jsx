@@ -1,52 +1,61 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import './compare.css'; // Import your CSS file
-import { CompareContext } from '../appService/compareService';
+import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, IconButton, Typography, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { showToast } from '../appService/Toast/Toast';
 import { ToastContainer } from 'react-toastify';
+import { CompareContext } from '../appService/compareService';
 
 const StyledTable = ({ data, onRemoveProperty }) => { 
+
   return (
-    data.length === 0 ? (
-      <div className="bordered-table no-data">
-        <p>No properties to Compare.</p>
-        <Link to='/listings'>
-          <button>Browse All Properties</button>
-        </Link>
-      </div>
-    ) : (
-      <table className=" bordered-table table table-responsive">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Cover</th>
-            <th>Name</th>
-            <th>Location</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={item.id}>
-              <td>{index+1}</td>
-              <td><img src={item.cover} alt={item.name} style={{ width: 100, height: 100 }} /></td>
-              <td>{item.name}</td>
-              <td>{item.address} {item.city}</td>
-              <td>{item.category}</td>
-              <td>{item.price}</td>
-              <td>{item.type}</td>
-              <td>
-                <button onClick={() => onRemoveProperty(item.id)}>Remove</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    )
+    <Container sx={{ mt: 4 }}>
+      {data.length === 0 ? (
+        <Box sx={{ textAlign: 'center', my: 4 }}>
+          <Typography variant="h6">No properties to Compare.</Typography>
+          <Link to='/listings'>
+            <Typography variant="body1" sx={{ cursor: 'pointer', color: 'primary.main', mt: 2 }}>
+              Browse All Properties
+            </Typography>
+          </Link>
+        </Box>
+      ) : (
+        <TableContainer>
+          <Table sx={{ minWidth: 650, border: '1px solid', borderColor: 'divider' }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Cover</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Location</TableCell>
+                <TableCell>Price Ksh:</TableCell>
+                <TableCell>Tenure</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.map((item, index) => (
+                <TableRow key={item.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    <img src={item.property_images[0]} alt={item.property_name} style={{ width: 100, height: 100 }} />
+                  </TableCell>
+                  <TableCell>{item.property_name}</TableCell>
+                  <TableCell>{item.property_address} {item.property_city}</TableCell>
+                  <TableCell>{item.property_price}</TableCell>
+                  <TableCell>{item.property_tenure}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => onRemoveProperty(item.id)}>
+                      <Typography variant="body2" color="error">Remove</Typography>
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </Container>
   );
 };
 
@@ -54,16 +63,19 @@ StyledTable.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      cover: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      location: PropTypes.string.isRequired,
-      category: PropTypes.string.isRequired,
-      price: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
+      property_images: PropTypes.arrayOf(PropTypes.string).isRequired,
+      property_name: PropTypes.string.isRequired,
+      property_address: PropTypes.string.isRequired,
+      property_city: PropTypes.string.isRequired,
+      property_description: PropTypes.string.isRequired,
+      property_price: PropTypes.number.isRequired,
+      property_tenure: PropTypes.string.isRequired,
     }).isRequired
   ).isRequired,
   onRemoveProperty: PropTypes.func.isRequired,
 };
+
+
 
 const Compare = () => {
   const { compare, setCompare } = useContext(CompareContext);
@@ -76,10 +88,10 @@ const Compare = () => {
   };
 
   return (
-    <section className="compare-section">
+    <Container sx={{ mt: 4 }}>
       <StyledTable data={Object.values(compare)} onRemoveProperty={handleRemoveProperty} />
-      <ToastContainer style={{zIndex:999999999}}/>
-    </section>
+      <ToastContainer style={{ zIndex: 999999999 }} />
+    </Container>
   );
 };
 

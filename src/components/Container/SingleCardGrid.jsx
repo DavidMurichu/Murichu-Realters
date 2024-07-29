@@ -2,7 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Container, styled, keyframes, Box, Typography, Button, IconButton, Card, CardContent, CardMedia, Chip, Grid } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { Favorite, FavoriteBorder, Compare, CameraAlt } from '@mui/icons-material';
-
+import { useTheme, useMediaQuery } from '@mui/material';
+import { useHistory } from 'react-router-dom';
 // Keyframe animations
 const fadeIn = keyframes`
   from {
@@ -138,9 +139,13 @@ const NextButton = styled(NavigationButton)`
 `;
 
 const Carousel = ({ items }) => {
+  const history=useHistory();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const itemsToShow = isSmallScreen ? 1 : 3;
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState('next');
-  const itemsToShow = 3;
 
   const handleNext = useCallback(() => {
     setDirection('next');
@@ -172,9 +177,16 @@ const Carousel = ({ items }) => {
 
     return () => clearInterval(autoSlideInterval);
   }, [handleNext]);
+  
+  const handleDisplay = (val) => {
+    history.push({
+      pathname: `/property-details/${val.id}`,
+      state: { property: val },
+    });
+  };
 
   return (
-    <Container>
+    <Container style={{background:'#f8f9fa'}}>
       <CarouselContainer>
         <AnimatedBox direction={direction}>
           <Grid container spacing={2}>
@@ -203,7 +215,9 @@ const Carousel = ({ items }) => {
                           color: item.property_tenure === 'sale' ? '#25b579' : '#ff9800',
                         }}
                       />
-                      <Button variant="outlined" color="primary">View</Button>
+                      <Button variant="outlined" color="primary" onClick={() => handleDisplay(item)}>
+                        View
+                      </Button>
                       <IconButton>
                         {item.isFavourite ? <Favorite sx={{ color: 'orange' }} /> : <FavoriteBorder sx={{ color: 'white' }} />}
                       </IconButton>
@@ -214,7 +228,7 @@ const Carousel = ({ items }) => {
                       <Typography variant="h6" noWrap>{item.property_city || 'Default City'}</Typography>
                     </Box>
                   </CardContent>
-                  <Box className="hover-icons">
+                  {/* <Box className="hover-icons">
                     <IconButton sx={{ color: 'white' }}>
                       <Compare />
                       <Typography variant="caption" color="inherit">Compare</Typography>
@@ -227,8 +241,8 @@ const Carousel = ({ items }) => {
                       <Favorite />
                       <Typography variant="caption" color="inherit">Add to Favorites</Typography>
                     </IconButton>
-                    {/* Add Delete Button if needed */}
-                  </Box>
+                
+                  </Box> */}
                 </StyledCard>
               </Grid>
             ))}

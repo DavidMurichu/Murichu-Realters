@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import './AdvancedFilter.css';
-import { InputLabel, MenuItem, Select, Grid, useMediaQuery, useTheme, TextField, Autocomplete, Slider, Box } from '@mui/material';
+import { InputLabel, MenuItem, Select, Grid, useMediaQuery, useTheme, TextField, Autocomplete, Typography, Button } from '@mui/material';
 import { TenureContext } from '../appService/TenureProvider';
 import { styled } from '@mui/system';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import fuzzysort from 'fuzzysort';
 
 const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
@@ -19,56 +20,68 @@ const StyledTextField = styled(TextField)({
     },
   },
 });
+
 const getUniqueValues = (list, key) => {
   return [...new Set(list.map(item => item[key]))];
 };
 
+const fuzzySearch = (input, options) => {
+  if (!input) return options;
+
+  const results = fuzzysort.go(input, options, { key: 'label' });
+  return results.map(result => result.obj);
+};
+
 const AdvanceFilter = ({ data, onFilterUpdate }) => {
-  const { propertyTenure, setPropertyTenure,location, setLocation } = useContext(TenureContext);
-  const [options, setOptions]=useState([]);
-  
+  const { propertyTenure, setPropertyTenure, location, setLocation } = useContext(TenureContext);
+  const [options, setOptions] = useState([]);
+  const [inputValue, setInputValue] = useState(location);
+  const [filteredData, setFilteredData] = useState([]);
   useEffect(() => {
     const transformedOptions = data.map((propertyinfo) => ({
       label: `${propertyinfo.property_city}, ${propertyinfo.property_address}`,
     }));
     setOptions(transformedOptions);
   }, [data]);
-  
+
+  const filteredOptions = fuzzySearch(inputValue, options);
 
   // Set initial slider values based on tenure
-  const initialSliderValue = propertyTenure === 'buy' ? 1000000000 : 100000;
-  const initialPriceMin = propertyTenure === 'buy' ? 500000 : 10000;
-  
-  // const [location, setLocation] = useState("");
+  const initialSliderValue = propertyTenure ===  1000000000;
+  const initialPriceMin = propertyTenure ===  10000;
+
   const [property, setPropertyChange] = useState("");
   const [bedrooms, setBedroomsChange] = useState("");
   const [sliderValue, setSliderValue] = useState(initialSliderValue);
   const [priceMin, setPriceMin] = useState(initialPriceMin);
 
   const propertyTypes = getUniqueValues(data, "property_type");
-  const locations = getUniqueValues(data, "property_city");
   const bedrooms_data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const handlePropertyChange = (event) => {
     setPropertyChange(event.target.value);
   };
 
-  const handleLocationChange = (event) => {
-    setLocation(event.target.value);
+  const handleLocationChange = (event, newValue) => {
+    const locationString=newValue ? newValue.label : ""
+    const [city, address] = locationString.split(',').map(part => part.trim());
+    setLocation(city);
   };
 
-  
+  const handleInputChange = (event, newInputValue) => {
+    setInputValue(newInputValue);
+  };
 
   const handleTenureClick = (tenure) => {
     setPropertyTenure(tenure);
     // Update slider values based on tenure
-    if (tenure === 'buy') {
-      setSliderValue(1000000000);
-      setPriceMin(500000);
-    } else if (tenure === 'rent') {
-      setSliderValue(100000);
-      setPriceMin(10000);
-    }
+    // if (tenure === 'buy') {
+    //   setSliderValue(1000000000);
+    //   setPriceMin(500000);
+    // } else if (tenure === 'rent') {
+    //   setSliderValue(100000);
+    //   setPriceMin(10000);
+    // }
   };
 
   const handleMinPrice = (event) => {
@@ -83,6 +96,21 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
     setBedroomsChange(event.target.value);
   };
 
+  const debounceFilterUpdate = useCallback(debounce((filters) => {
+    onFilterUpdate(filters);
+  }, 300), []);
+ function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
   useEffect(() => {
     const filtered = data.filter(item => {
       const matchesCategory = !propertyTenure || item.property_tenure === propertyTenure;
@@ -94,13 +122,13 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
       return matchesCategory && matchesType && matchesLocation && matchesBedrooms && matchesMinPrice && matchesMaxPrice;
     });
 
-    onFilterUpdate(filtered);
-  }, [location, property, bedrooms, sliderValue, propertyTenure, priceMin, data, onFilterUpdate]);
+    setFilteredData(filtered);
+    debounceFilterUpdate(filtered);
+  }, [location, property, bedrooms, sliderValue, propertyTenure, priceMin, data, debounceFilterUpdate]);
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  
   return (
     <div className="card">
       <div className='tenure-filter'>
@@ -149,20 +177,41 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
         </Grid>
 
         <Grid item>
-          {/* <Select
-            value={location}
+          <Autocomplete
+            freeSolo
+            options={filteredOptions}
+            getOptionLabel={(option) => option.label}
             onChange={handleLocationChange}
-            displayEmpty
-            variant="outlined"
-          >
-            <MenuItem value="">
-              <em>Select Location</em>
-            </MenuItem>
-            {locations.map((location, index) => (
-              <MenuItem key={index} value={location}>{location}</MenuItem>
-            ))}
-          </Select> */}
-         
+            inputValue={inputValue}
+            onInputChange={handleInputChange}
+            renderInput={(params) => (
+              <TextField
+                
+                {...params}
+                sx={{
+                  minWidth: '200px',
+                  width: 'auto',
+                  margin: '1%',
+                  borderRadius: '2rem',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'none',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'none',
+                    },
+                  },
+                }}
+                placeholder='Search by location'
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <LocationOnIcon style={{ marginRight: '10px', color: '#27ae60' }} />
+                  ),
+                }}
+              />
+            )}
+          />
         </Grid>
 
         <Grid item>
@@ -182,40 +231,6 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
             ))}
           </Select>
         </Grid>
-        <Grid item>
-        <Autocomplete
-        options={options}
-        getOptionLabel={(option) => option.label}
-        renderInput={(params) => <TextField
-          {...params}
-  
-          sx={{
-            margin:'1%',
-             borderRadius:'2rem',
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: 'black',
-            },
-            
-            '&.Mui-focused fieldset': {
-              borderColor: 'black',
-            },
-          },
-          }}
-          placeholder='Search by location'
-          InputProps={{
-            startAdornment: (
-                <LocationOnIcon style={{ marginRight: '10px', color: '#27ae60' }} />
-            ),
-        }}
-          />
-  
-          }
-        
-        >
-        </Autocomplete>  
-        
-      </Grid>
       </Grid>
 
       <Grid

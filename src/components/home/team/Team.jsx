@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Heading from "../../common/Heading";
 import "./team.css";
 import { FetchData } from '../../appService/Delay';
 import { useHistory } from 'react-router-dom';
-
-
+import { useMediaQuery, useTheme } from '@mui/material';
 
 const Card = ({ data, isActive, position }) => {
   const navigate = useHistory();
@@ -13,10 +12,9 @@ const Card = ({ data, isActive, position }) => {
     console.log('agent', agentdata);
     navigate.push({
       pathname: `/agent-details`,
-
       state: { data: agentdata },
-    
-  })};
+    });
+  };
 
   const variants = {
     enter: (direction) => ({
@@ -42,7 +40,7 @@ const Card = ({ data, isActive, position }) => {
       className={`box ${isActive ? 'active' : 'inactive'}`}
       custom={position}
       variants={variants}
-      cursor= 'pointer'
+      cursor='pointer'
       initial="enter"
       animate="center"
       exit="exit"
@@ -67,9 +65,9 @@ const Card = ({ data, isActive, position }) => {
           ))}
         </ul>
         <div className='button flex'>
-          <a 
+          <a
             href={`https://wa.me/${data.phone}`}
-            target="_blank" 
+            target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}
           >
@@ -78,9 +76,9 @@ const Card = ({ data, isActive, position }) => {
               <h6>Message</h6>
             </button>
           </a>
-          <a 
+          <a
             href={`tel:${data.phone}`}
-            target="_blank" 
+            target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}
           >
@@ -98,6 +96,8 @@ const Team = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fetch = async () => {
     try {
@@ -121,18 +121,20 @@ const Team = () => {
     }
   }, [team.length]);
 
-  const getVisibleCards = () => {
+  const getVisibleCards = useCallback(() => {
     if (team.length === 0) return [];
-    
+
+    if (isSmallScreen) {
+      return [activeIndex];
+    }
+
     const visibleCount = Math.min(3, team.length);
     const indices = [];
-    
     for (let i = 0; i < visibleCount; i++) {
       indices.push((activeIndex + i - 1 + team.length) % team.length);
     }
-    
     return indices;
-  };
+  }, [team.length, activeIndex, isSmallScreen]);
 
   const visibleCards = getVisibleCards();
 
@@ -140,7 +142,7 @@ const Team = () => {
     <section className='team background'>
       <div className='container'>
         <Heading title='Our Featured Agents' subtitle='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.' />
-        <div className='content mtop grid3'>
+        <div className='content mtop'>
           {team.length === 0 ? (
             <p>No agents available</p>
           ) : (
@@ -149,7 +151,7 @@ const Team = () => {
                 <Card
                   key={team[cardIndex]?.id || index}
                   data={team[cardIndex] || {}}
-                  isActive={index === 1}
+                  isActive={index === 0}
                   position={index - 1}
                 />
               ))}

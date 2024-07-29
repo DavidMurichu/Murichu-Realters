@@ -29,6 +29,7 @@ import AddAgentForm from '../admin/dashboard/Agents/addAgent';
 import Agents from '../admin/dashboard/Agents';
 import AuthProvider, { useAuth } from '../appService/auth/AuthService';
 import AgentProperties from '../home/team/AgentProperties';
+import ScrollTop from '../ScrollTop';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const { isAuthenticated } = useAuth();
@@ -73,6 +74,7 @@ const Pages = () => {
         <CompareProvider>
           <TenureProvider>
             <Router>
+              <ScrollTop />
               <Switch>
                 <Route path="/login" component={LoginPage} />
 

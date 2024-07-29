@@ -35,6 +35,7 @@ const FeaturedLink = () => {
       />
       <LinkCard
         avatarSrc={sell}
+        buttonurl='/contact'
         buttontext="Sell Home"
         title="Sell a home"
         subtitle="Discover our latest properties, meticulously selected to meet your needs and lifestyle. Explore now and find your perfect home."

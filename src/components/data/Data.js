@@ -479,14 +479,32 @@ export const price = [
 export const footer = [
   {
     title: "MURICHU",
-    text: [{ list: "Home" }, { list: "About" }, { list: "Listings" }, { list: "Sell With Us" }, { list: "Our Team" }, { list: "Careers" }],
+    text: [
+      { list: "Home", to: "/" },
+      { list: "About", to: "/about" },
+      { list: "Listings", to: "/listings" },
+      { list: "Sell With Us", to: "/contact" },
+      { list: "Our Team", to: "/" }, // Added "/" as placeholder
+      { list: "Careers", to: "/" } // Added "/" as placeholder
+    ],
   },
   {
-    title: "DOCUMENTATON",
-    text: [{ list: "Blog" }, { list: "Contact" }, { list: "FAQ" }, { list: "Privacy Policy" }],
+    title: "DOCUMENTATION",
+    text: [
+      { list: "Blog", to: "/" },
+      { list: "Contact", to: "/contact" },
+      { list: "FAQ", to: "/" }, // Added "/" as placeholder
+      { list: "Privacy Policy", to: "/" } // Added "/" as placeholder
+    ],
   },
   {
     title: "SOCIAL",
-    text: [{ list: "FaceBook" }, { list: "Instagram" }, { list: "YouTube" }, { list: "Twitter" }],
+    text: [
+      { list: "FaceBook", to: "/" }, // Added "/" as placeholder
+      { list: "Instagram", to: "/" }, // Added "/" as placeholder
+      { list: "YouTube", to: "/" }, // Added "/" as placeholder
+      { list: "Twitter", to: "/" } // Added "/" as placeholder
+    ],
   },
-]
+];
+

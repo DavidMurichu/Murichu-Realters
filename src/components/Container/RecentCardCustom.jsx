@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Typography, Button, IconButton, Card, CardContent, CardMedia, Chip, Grid } from '@mui/material';
-import { Favorite, FavoriteBorder, Compare, CameraAlt, Delete } from '@mui/icons-material';
+import { Box, Typography, IconButton, Card, CardContent, CardMedia, Chip, Grid, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
+import { Favorite, FavoriteBorder, Compare, CameraAlt, Delete, Mail } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/system';
 import { CompareContext } from '../appService/compareService';
 import { ToastContainer, toast } from 'react-toastify';
 import { TenureContext } from '../appService/TenureProvider';
+import { formatPrice } from '../appService/Delay';
 
 const fadeIn = keyframes`
   from {
@@ -41,11 +42,65 @@ const StyledCard = styled(Card)`
   }
 `;
 
+const ContactForm = ({ open, handleClose, property }) => {
+  const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = () => {
+    // Handle form submission here
+    console.log({ name, phoneNumber, message, propertyId: property.id });
+    handleClose();
+  };
+
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Contact Agent</DialogTitle>
+      <DialogContent>
+        <Typography variant="h6">{property.property_name}</Typography>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Name"
+          fullWidth
+          variant="outlined"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Phone Number"
+          fullWidth
+          variant="outlined"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Message"
+          fullWidth
+          variant="outlined"
+          multiline
+          rows={4}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleSubmit} color="primary">Send</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 const RecentCardCustom = ({ list, handleDelete }) => {
   const { compare, setCompare } = useContext(CompareContext);
   const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
 
   const [items, setItems] = useState(list);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [openContactForm, setOpenContactForm] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -89,6 +144,11 @@ const RecentCardCustom = ({ list, handleDelete }) => {
         item.id === id ? { ...item, isFavourite: !item.isFavourite } : item
       )
     );
+  };
+
+  const handleContact = (property) => {
+    setSelectedProperty(property);
+    setOpenContactForm(true);
   };
 
   return (
@@ -149,7 +209,7 @@ const RecentCardCustom = ({ list, handleDelete }) => {
                       <i className="fa fa-location-dot" /> {val.property_address}, {val.property_city}
                     </Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                      <Button
+                      <Typography
                         variant="outlined"
                         color="primary"
                         sx={{
@@ -160,74 +220,94 @@ const RecentCardCustom = ({ list, handleDelete }) => {
                           background: '#27ae60',
                         }}
                       >
-                        Ksh: {val.property_price}
-                      </Button>
+                        Ksh: {formatPrice(val.property_price)} {/* Format price */}
+                      </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                         {val.property_type}
                       </Typography>
                     </Box>
-                  </CardContent>
-                </Box>
-                <Box className="hover-icons">
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addCompare(val);
-                    }}
-                    sx={{ color: 'white' }}
-                  >
-                    <Compare />
-                    <Typography variant="caption" color="inherit">
-                      Compare
-                    </Typography>
-                  </IconButton>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleImageClick(val);
-                    }}
-                    sx={{ color: 'white' }}
-                  >
-                    <CameraAlt />
-                    <Typography variant="caption" color="inherit">
-                      View Photos
-                    </Typography>
-                  </IconButton>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavourite(val.id);
-                    }}
-                    sx={{ backgroundColor: val.isFavourite ? 'orange' : '#27ae60', borderRadius: 1, p: 1, color: 'white' }}
-                  >
-                    <Favorite />
-                    <Typography variant="caption" color="inherit">
-                      Add to Favorites
-                    </Typography>
-                  </IconButton>
-                  {handleDelete && (
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(val.id);
+                        handleContact(val);
                       }}
-                      sx={{ color: 'white' }}
+                      sx={{ position: 'absolute', bottom: 10, right: 10, color: 'green' }}
                     >
-                      <Delete />
-                      <Typography variant="caption" color="inherit">
-                        Delete
-                      </Typography>
-                    </IconButton>
-                  )}
-                </Box>
-              </StyledCard>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-      <ToastContainer style={{ zIndex: 9999999999 }} />
-    </>
-  );
-};
-
-export default RecentCardCustom;
+                      <Mail />
+                                            <Typography variant="caption" color="green">
+                                            Contact
+                                          </Typography>
+                                        </IconButton>
+                                      </CardContent>
+                                    </Box>
+                                    <Box className="hover-icons">
+                                      <IconButton
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          addCompare(val);
+                                        }}
+                                        sx={{ color: 'white' }}
+                                      >
+                                        <Compare />
+                                        <Typography variant="caption" color="inherit">
+                                          Compare
+                                        </Typography>
+                                      </IconButton>
+                                      <IconButton
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleImageClick(val);
+                                        }}
+                                        sx={{ color: 'white' }}
+                                      >
+                                        <CameraAlt />
+                                        <Typography variant="caption" color="inherit">
+                                          View Photos
+                                        </Typography>
+                                      </IconButton>
+                                      <IconButton
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleFavourite(val.id);
+                                        }}
+                                        sx={{ backgroundColor: val.isFavourite ? 'orange' : '#27ae60', borderRadius: 1, p: 1, color: 'white' }}
+                                      >
+                                        <Favorite />
+                                        <Typography variant="caption" color="inherit">
+                                          Add to Favorites
+                                        </Typography>
+                                      </IconButton>
+                                      {handleDelete && (
+                                        <IconButton
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(val.id);
+                                          }}
+                                          sx={{ color: 'white' }}
+                                        >
+                                          <Delete />
+                                          <Typography variant="caption" color="inherit">
+                                            Delete
+                                          </Typography>
+                                        </IconButton>
+                                      )}
+                                    </Box>
+                                  </StyledCard>
+                                </Grid>
+                              ))}
+                            </Grid>
+                          )}
+                          <ToastContainer style={{ zIndex: 9999999999 }} />
+                          {selectedProperty && (
+                            <ContactForm
+                              open={openContactForm}
+                              handleClose={() => setOpenContactForm(false)}
+                              property={selectedProperty}
+                            />
+                          )}
+                        </>
+                      );
+                    };
+                    
+                    export default RecentCardCustom;
+                    
