@@ -54,7 +54,7 @@ const PropertyInformationPage = () => {
     property_bedrooms,
     property_images,
     property_description,
-    property_features,
+    features,
   } = property;
 
   const agent = property.agent;
@@ -272,7 +272,7 @@ const PropertyInformationPage = () => {
                   Features
                 </Typography>
                 <List sx={{ listStyleType: 'disc', pl: 3 }}>
-                  {(Array.isArray(property_features) && property_features.length > 0 ? property_features : dummyFeatures).map((feature, index) => (
+                  {(Array.isArray(features) && features.length > 0 ? features : dummyFeatures).map((feature, index) => (
                     <ListItem key={index} sx={{ display: 'list-item', py: 0 }}>
                       <ListItemText primary={feature} />
                     </ListItem>

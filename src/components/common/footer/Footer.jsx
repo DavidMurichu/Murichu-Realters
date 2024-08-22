@@ -49,9 +49,9 @@ const StyledButton = styled(Button)`
     <>
      
 
-      <footer>
-        <div className='container'>
-          <div className='box'>
+      <footer >
+        <div className='container' style={{justifyContent: 'center'} } sx>
+          <div className='box' style={{justifyContent: 'center'}}>
             <div className='logo' >
               <img src={logo} alt='Logo' />
              

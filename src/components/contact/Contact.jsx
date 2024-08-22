@@ -3,6 +3,8 @@ import img from '../images/pricing.jpg';
 import Back from '../common/Back';
 import { Container, Typography, TextField, Button, Box, FormHelperText } from '@mui/material';
 import { styled } from '@mui/system';
+import { PostData } from '../appService/Delay';
+import { ToastContainer, toast } from 'react-toastify';
 
 const FormContainer = styled(Box)`
   padding: 2rem;
@@ -19,6 +21,7 @@ const Contact = () => {
     email: '',
     subject: '',
     message: '',
+    phonenumber: ''
   });
 
   const [errors, setErrors] = useState({
@@ -26,6 +29,7 @@ const Contact = () => {
     email: '',
     subject: '',
     message: '',
+    phonenumber: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,6 +55,10 @@ const Contact = () => {
       newErrors.subject = 'Subject is required';
       isValid = false;
     }
+    if (!formValues.phonenumber.trim()) {
+      newErrors.phonenumber = 'Phone number is required';
+      isValid = false;
+    }
 
     if (!formValues.message.trim()) {
       newErrors.message = 'Message is required';
@@ -69,11 +77,23 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (validate()) {
       setIsSubmitting(true);
-      // Submit form logic here
+      try {
+        const response = await PostData('user-responses/', formValues);
+        console.log('response status', response)
+        if (response['status']===201) {
+          toast.success('Message sent successfully');
+        } else {
+          toast.error('Failed to send message');
+        }
+      } catch (error) {
+        console.log('error', error);
+        toast.error('An error occurred while sending the message');
+      }
+      
       console.log('Form Submitted:', formValues);
       setIsSubmitting(false);
     }
@@ -88,7 +108,7 @@ const Contact = () => {
             <Typography variant="h4" gutterBottom>
               Fill Up The Form
             </Typography>
-            <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+            <form noValidate autoComplete="on" onSubmit={handleSubmit}>
               <Box mb={2}>
                 <TextField
                   fullWidth
@@ -100,6 +120,20 @@ const Contact = () => {
                   onChange={handleChange}
                   error={!!errors.name}
                   helperText={errors.name}
+                />
+              </Box>
+              <Box mb={2}>
+                <TextField
+                  type='number'
+                  fullWidth
+                  label="Phone Number"
+                  variant="outlined"
+                  margin="normal"
+                  name="phonenumber"
+                  value={formValues.phonenumber}
+                  onChange={handleChange}
+                  error={!!errors.phonenumber}
+                  helperText={errors.phonenumber}
                 />
               </Box>
               <Box mb={2}>
@@ -156,6 +190,7 @@ const Contact = () => {
             </form>
           </FormContainer>
         </Container>
+        <ToastContainer style={{zIndex:2}}/>
       </section>
     </>
   );

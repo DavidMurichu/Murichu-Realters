@@ -1,6 +1,6 @@
-from rest_framework import viewsets
-from .models import Agents, Location, PropertyType, PropertyTenure, Properties, PropertyImages, UserResponse
-from .serializer import AgentGetSerializer, AgentSerializer, LocationSerializer, PropertyGetSerializer, PropertyTypeSerializer, PropertyTenureSerializer, PropertiesSerializer, PropertyImagesSerializer, UserResponsSerializer
+from rest_framework import viewsets, mixins
+from .models import Agents, Location, PropertyType, Blogs, PropertyTenure, Properties, PropertyImages, UserResponse
+from .serializer import AgentGetSerializer, MessageSerializer, AgentSerializer, LocationSerializer, PropertyGetSerializer, PropertyTypeSerializer, PropertyTenureSerializer, PropertiesSerializer, PropertyImagesSerializer, UserResponsSerializer, BlogsSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -9,11 +9,46 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.conf import settings
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
+from django.core.mail import send_mail
+from rest_framework.views import APIView
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 class UserResponseViewSet(viewsets.ModelViewSet):
     queryset=UserResponse.objects.all()
     serializer_class=UserResponsSerializer
 
+    def perform_create(self, serializer):
+        user_response = serializer.save()
+
+        # Prepare email details
+        property_name = user_response.property.property_name if user_response.property else "N/A"
+        property_address = user_response.property.property_address if user_response.property else "N/A"
+        agent_name = user_response.agent.name if user_response.agent else "N/A"
+
+        subject = f"New User Response from {user_response.name}"
+        message = (
+            f"You have received a new response.\n\n"
+            f"Name: {user_response.name}\n"
+            f"Email: {user_response.email}\n"
+            f"Phone Number: {user_response.phonenumber}\n"
+            f"Message: {user_response.message}\n"
+            f"Property Name: {property_name}\n"
+            f"Property Address: {property_address}\n"
+            f"Agent: {agent_name}\n"
+            f"Subject: {user_response.subject if user_response.subject else 'No Subject'}\n"
+        )
+        from_email =  os.getenv('ADMIN_EMAIL')
+        admin_email =  os.getenv('ADMIN_EMAIL')
+
+        # Use SendMessageViewSet to send the email
+        send_message_viewset = SendMessageViewSet()
+        error = send_message_viewset.send_email(subject, message, from_email, admin_email)
+
+        if error:
+            # Handle the error (e.g., log it, raise an exception, etc.)
+            print(f"Error sending email: {error}")
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
@@ -107,6 +142,10 @@ class AgentGetViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Agents.objects.all()
     serializer_class = AgentGetSerializer
 
+class BlogsViewSet(viewsets.ModelViewSet):
+    queryset = Blogs.objects.all()
+    serializer_class= BlogsSerializer
+
 @api_view(['POST'])
 def verify_token(request):
     token = request.data.get('token')
@@ -161,3 +200,41 @@ class PropertiesGetViewSet(viewsets.ModelViewSet):
         Extra context provided to the serializer class.
         """
         return {'request': self.request}
+    
+
+class SendMessageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    serializer_class = MessageSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            subject = serializer.validated_data['subject']
+            message = serializer.validated_data['message']
+            from_email = serializer.validated_data['email_from']
+            email = serializer.validated_data['email']
+
+
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    from_email,
+                    [email],
+                    fail_silently=True,
+                )
+                return Response({'status': 'success', 'message': 'Email sent successfully'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def send_email(self, subject, message, from_email, email):
+        try:
+            send_mail(
+                subject,
+                message,
+                from_email,
+                [email],
+                fail_silently=True,
+            )
+        except Exception as e:
+            return str(e)
+        return None

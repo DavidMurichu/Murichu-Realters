@@ -45,21 +45,24 @@ const Listings = () => {
 
        </div>
       <div className='container recent'>
-        {!loading
+        {!loading 
         &&
         <RecentCardCustom list={filteredList} />
         }
       </div>
-      <Box className='footerContact' justifyContent='center' style={{background:'#f8f9fa'}}>
-      <StyledTitle>
-    Similar Properties
-        </StyledTitle>
-
-        <Grid container className='container' justifyContent="center" alignItems="center"style={{background:'#f8f9fa'}}>
-       
-          <SingleCard items={propertyData || []} /> {/* Ensure items is an array */}
-        </Grid>
-      </Box>
+      {propertyData.length!==0&&
+       <Box className='footerContact' justifyContent='center' style={{background:'#f8f9fa'}}>
+       <StyledTitle>
+     Similar Properties
+         </StyledTitle>
+ 
+         <Grid container className='container' justifyContent="center" alignItems="center"style={{background:'#f8f9fa'}}>
+        
+           <SingleCard items={propertyData || []} /> {/* Ensure items is an array */}
+         </Grid>
+       </Box>
+      }
+     
     </section>
 
   );

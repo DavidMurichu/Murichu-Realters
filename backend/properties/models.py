@@ -44,6 +44,8 @@ class Properties(models.Model):
     property_address = models.CharField(max_length=100)
     property_price = models.FloatField()
     property_bedrooms = models.IntegerField()
+    features=models.JSONField(blank=True, null=True, default='Not Specified')
+    is_active=models.BooleanField(default=True)
 
  
    
@@ -63,7 +65,15 @@ class UserResponse(models.Model):
     name=models.CharField(max_length=30)
     email=models.EmailField(blank=True)
     phonenumber=models.CharField(max_length=13)
+    subject=models.CharField(max_length=30, blank=True, null=True)
     message=models.TextField(max_length=500)
+    agent=models.ForeignKey(Agents, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+
+class Blogs(models.Model):
+    title=models.CharField(max_length=1000)
+    body= models.TextField(max_length=50000)
+    image= models.ImageField(upload_to='blogs', default='Not set')

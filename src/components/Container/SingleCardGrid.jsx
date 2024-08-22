@@ -191,8 +191,17 @@ const Carousel = ({ items }) => {
         <AnimatedBox direction={direction}>
           <Grid container spacing={2}>
             {getVisibleItems().map((item, index) => (
-              <Grid item xs={12} sm={4} key={item.id}>
+              <Grid item xs={12} sm={4} key={item.id} >
                 <StyledCard sx={{ boxShadow: 3 }}>
+                <Box
+                  onClick={() => handleDisplay(item)}
+                  sx={{ cursor: 'pointer' }}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  onKeyUp={(e) => e.stopPropagation()}
+                  onKeyPress={(e) => e.stopPropagation()}
+                  role="button"
+                  tabIndex={0}
+                >
                   <CardMedia
                     component="img"
                     height="150"
@@ -243,6 +252,7 @@ const Carousel = ({ items }) => {
                     </IconButton>
                 
                   </Box> */}
+                  </Box>
                 </StyledCard>
               </Grid>
             ))}

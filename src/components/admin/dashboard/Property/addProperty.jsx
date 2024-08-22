@@ -5,8 +5,6 @@ import { BASE_URL, Delay, FetchData } from '../../../appService/Delay';
 import axios from 'axios';
 import AddPropertyImageForm from './AddPropertyImage';
 
-
-
 const AddPropertyForm = () => {
   const [formData, setFormData] = useState({
     property_name: '',
@@ -17,6 +15,7 @@ const AddPropertyForm = () => {
     property_bedrooms: '',
     property_price: '',
     agent: '',
+    features: '' // Initialize as an empty string
   });
 
   const [cities, setCities] = useState([]);
@@ -27,23 +26,29 @@ const AddPropertyForm = () => {
   const [propertyData, setPropertyData] = useState(null);
 
   const handleSubmit = async (event) => {
+    
     try {
       console.log('data', formData);
       const token = localStorage.getItem('access_token');
       console.log('local token', token);
       
-      const response = await axios.post(`${BASE_URL}/properties/`, formData, {
+      // Convert features string to array
+      const featuresArray = formData.features.split(',').map(feature => feature.trim());
+      
+      const response = await axios.post(`${BASE_URL}/properties/`, {
+        ...formData,
+        features: featuresArray
+      }, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization':`Bearer ${token}`
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
-        
       });
+
       console.log('response property', response);
       if (response.status === 201) {
-        
         toast.success("Property added successfully");
-        setPropertyData(response.data); 
+        setPropertyData(response.data);
       } else {
         toast.error("Contact admin");
       }
@@ -77,7 +82,6 @@ const AddPropertyForm = () => {
 
   const propertyFields = [
     { name: 'property_name', label: 'Property Name', type: 'text', required: true },
-    
     { name: 'property_city', label: 'Property City', type: 'select', 
       options: cities.map(location => ({ value: location.id, label: location.city })),
       required: true },
@@ -93,7 +97,8 @@ const AddPropertyForm = () => {
     { name: 'agent', label: 'Agent', type: 'select', 
       options: agents.map(agent => ({ value: agent.id, label: agent.name })),
       required: true },
-      { name: 'property_description', label: 'Property Description', type: 'text', required: true },
+    { name: 'property_description', label: 'Property Description', type: 'text', required: true },
+    { name: 'features', label: 'Property Features (comma-separated)', type: 'text', required: false } // New field
   ];
 
   return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import LoginPage from '../admin/auth/Login/Login';
 import Header from '../common/header/Header';
@@ -30,6 +30,10 @@ import Agents from '../admin/dashboard/Agents';
 import AuthProvider, { useAuth } from '../appService/auth/AuthService';
 import AgentProperties from '../home/team/AgentProperties';
 import ScrollTop from '../ScrollTop';
+import Blog from '../blog';
+import UserResponses from '../admin/dashboard/user-response/idex';
+import BlogManagement from '../admin/dashboard/Blogs';
+import AddBlog from '../admin/dashboard/Blogs/addblog';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const { isAuthenticated } = useAuth();
@@ -50,7 +54,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
 const AdminRoute = ({ component: Component, ...rest }) => {
   const { isAuthenticated } = useAuth();
-
   return (
     <Route
       {...rest}
@@ -88,6 +91,9 @@ const Pages = () => {
                 <AdminRoute path="/admin/add-property-types" component={AddPropertyTypeForm} />
                 <AdminRoute path="/admin/agents" component={Agents} />
                 <AdminRoute path="/admin/add-agents" component={AddAgentForm} />
+                <AdminRoute path="/admin/user-response" component={UserResponses} />
+                <AdminRoute path="/admin/blogs" component={BlogManagement} />
+                <AdminRoute path="/admin/add-blog" component={AddBlog} />
                 <AdminRoute path="/admin" component={DashboardDefault} />
 
                 <Route path="/">
@@ -104,6 +110,7 @@ const Pages = () => {
                     <Route exact path="/property-details/:id" component={PropertyInformationPage} />
                     <Route exact path="/view-photos/:id" component={ImageViewer} />
                     <Route exact path="/agent-details" component={AgentProperties} />
+                    <Route exact path="/blogs" component={Blog} />
                   </Switch>
                   <Footer />
                 </Route>

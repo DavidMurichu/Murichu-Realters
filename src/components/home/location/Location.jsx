@@ -57,17 +57,21 @@ const Location = () => {
   
 
     return (
-        <section className='location padding'>
-            <div className='container'>
-                <Heading 
-                    title='Explore By Location' 
-                    subtitle='Discover the best properties in your desired area. Browse through different neighborhoods and find the perfect home for you.' 
-                    style={{margin:'2px'}}
-                />
-                <LocationCarousel items={location} />
-              
-            </div>
-        </section>
+            location.length!==0 &&(
+                <section className='location padding'>
+                <div className='container'>
+                    <Heading 
+                        title='Explore By Location' 
+                        subtitle='Discover the best properties in your desired area. Browse through different neighborhoods and find the perfect home for you.' 
+                        style={{margin:'2px'}}
+                    />
+                    <LocationCarousel items={location} />
+                  
+                </div>
+            </section>
+            )
+        
+       
     );
 };
 

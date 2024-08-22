@@ -6,7 +6,7 @@ import { styled, keyframes } from '@mui/system';
 import { CompareContext } from '../appService/compareService';
 import { ToastContainer, toast } from 'react-toastify';
 import { TenureContext } from '../appService/TenureProvider';
-import { formatPrice } from '../appService/Delay';
+import { PostData, formatPrice } from '../appService/Delay';
 
 const fadeIn = keyframes`
   from {
@@ -44,12 +44,34 @@ const StyledCard = styled(Card)`
 
 const ContactForm = ({ open, handleClose, property }) => {
   const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phonenumber, setPhonenumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = () => {
-    // Handle form submission here
-    console.log({ name, phoneNumber, message, propertyId: property.id });
+  const handleSubmit = async () => {
+    const formData = {
+      name,
+      email,
+      phonenumber,
+      message,
+      property: property.id,
+      subject,
+    };
+
+    try {
+      const response = await PostData('user-responses/', formData);
+      console.log('response status', response)
+      if (response['status']===201) {
+        toast.success('Message sent successfully');
+      } else {
+        toast.error('Failed to send message');
+      }
+    } catch (error) {
+      console.log('error', error);
+      toast.error('An error occurred while sending the message');
+    }
+
     handleClose();
   };
 
@@ -69,11 +91,27 @@ const ContactForm = ({ open, handleClose, property }) => {
         />
         <TextField
           margin="dense"
+          label="Email"
+          fullWidth
+          variant="outlined"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          margin="dense"
           label="Phone Number"
           fullWidth
           variant="outlined"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
+          value={phonenumber}
+          onChange={(e) => setPhonenumber(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Subject"
+          fullWidth
+          variant="outlined"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
         />
         <TextField
           margin="dense"
@@ -93,8 +131,7 @@ const ContactForm = ({ open, handleClose, property }) => {
     </Dialog>
   );
 };
-
-const RecentCardCustom = ({ list, handleDelete }) => {
+const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
   const { compare, setCompare } = useContext(CompareContext);
   const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
 
@@ -161,7 +198,7 @@ const RecentCardCustom = ({ list, handleDelete }) => {
           </Button>
         </Box>
       ) : (
-        <Grid container spacing={3} mt={2}>
+        <Grid container spacing={3} mt={2} style={{margin:'10px', maxWidth:'100%'}}>
           {items.map((val) => (
             <Grid item xs={12} sm={6} md={4} key={val.id} sx={{ m: { xs: 3, sm: 0 } }}>
               <StyledCard sx={{ boxShadow: 3 }}>
@@ -226,7 +263,10 @@ const RecentCardCustom = ({ list, handleDelete }) => {
                         {val.property_type}
                       </Typography>
                     </Box>
-                    <IconButton
+
+                    {!handleDelete &&
+                    (
+<IconButton
                       onClick={(e) => {
                         e.stopPropagation();
                         handleContact(val);
@@ -238,6 +278,11 @@ const RecentCardCustom = ({ list, handleDelete }) => {
                                             Contact
                                           </Typography>
                                         </IconButton>
+
+                    )
+                    }
+                    
+
                                       </CardContent>
                                     </Box>
                                     <Box className="hover-icons">

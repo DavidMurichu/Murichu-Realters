@@ -491,7 +491,7 @@ export const footer = [
   {
     title: "DOCUMENTATION",
     text: [
-      { list: "Blog", to: "/" },
+      { list: "Blogs", to: "/blogs" },
       { list: "Contact", to: "/contact" },
       { list: "FAQ", to: "/" }, // Added "/" as placeholder
       { list: "Privacy Policy", to: "/" } // Added "/" as placeholder
@@ -508,3 +508,43 @@ export const footer = [
   },
 ];
 
+export const blogs=[
+{
+  id:1,
+  cover_image:'../images/services.jpg',
+  title:'Happy souls',
+  body:`Welcome to Murichu Realtors, where dreams find their homes. Established in 2020, we have been a cornerstone in the real estate market, dedicated to providing unparalleled service and expertise. Our mission is to connect people with the perfect property that fits their needs and lifestyle.
+
+  Our team of experienced professionals is committed to guiding you through every step of the buying, selling, or renting process. We believe in a personalized approach, understanding that each client is unique and deserves a tailored experience.
+  
+  At Murichu Realtors, we pride ourselves on our deep knowledge of the market and our unwavering dedication to customer satisfaction. We leverage cutting-edge technology and marketing strategies to ensure your property gets the visibility it deserves.
+  
+  Join us on this journey and discover why countless clients trust Murichu Realtors for their real estate needs. Your dream home is just a step away.`
+},
+{
+  id:2,
+  cover_image:'http://127.0.0.1:8000/media/property_images/city-6.png',
+  title:'happy souls 2',
+  body:`Welcome to Murichu Realtors, where dreams find their homes. Established in 2020, we have been a cornerstone in the real estate market, dedicated to providing unparalleled service and expertise. Our mission is to connect people with the perfect property that fits their needs and lifestyle.
+
+  Our team of experienced professionals is committed to guiding you through every step of the buying, selling, or renting process. We believe in a personalized approach, understanding that each client is unique and deserves a tailored experience.
+  
+  At Murichu Realtors, we pride ourselves on our deep knowledge of the market and our unwavering dedication to customer satisfaction. We leverage cutting-edge technology and marketing strategies to ensure your property gets the visibility it deserves.
+  
+  Join us on this journey and discover why countless clients trust Murichu Realtors for their real estate needs. Your dream home is just a step away.`
+},
+
+{
+  id:3,
+  title:'happy souls 3',
+  body:`Welcome to Murichu Realtors, where dreams find their homes. Established in 2020, we have been a cornerstone in the real estate market, dedicated to providing unparalleled service and expertise. Our mission is to connect people with the perfect property that fits their needs and lifestyle.
+
+  Our team of experienced professionals is committed to guiding you through every step of the buying, selling, or renting process. We believe in a personalized approach, understanding that each client is unique and deserves a tailored experience.
+  
+  At Murichu Realtors, we pride ourselves on our deep knowledge of the market and our unwavering dedication to customer satisfaction. We leverage cutting-edge technology and marketing strategies to ensure your property gets the visibility it deserves.
+  
+  Join us on this journey and discover why countless clients trust Murichu Realtors for their real estate needs. Your dream home is just a step away.`
+}
+
+
+]

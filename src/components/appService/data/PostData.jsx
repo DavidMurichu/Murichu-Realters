@@ -24,7 +24,7 @@ class ApiService{
             return response;
         } catch (error) {
             console.error(`POST request failed: ${error.message}`);
-            throw error;
+            return error;
         }
     }
 

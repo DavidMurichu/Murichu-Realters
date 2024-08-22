@@ -57,7 +57,7 @@ const fadeIn = keyframes`
       gap={{ xs: 2, md: 4 }} // Adds space between FormCard and RecentCardCustom
     >
       <Box flexBasis={{ xs: '100%', md: '20%' }} flexGrow={{ xs: 1, md: 0 }}>
-        <AgentFormsCard />
+        <AgentFormsCard agent={agentData}/>
       </Box>
       <Box flexBasis={{ xs: '100%', md: '80%' }} flexGrow={{ xs: 1, md: 1 }} alignItems='center'>
         <Typography

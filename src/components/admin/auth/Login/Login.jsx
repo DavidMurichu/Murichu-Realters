@@ -1,12 +1,13 @@
 // LoginPage.js
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import LoginForm from './LoginForm';
 import { ToastContainer } from 'react-toastify';
 import { showToast } from '../../../appService/Toast/Toast';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useAuth } from '../../../appService/auth/AuthService';
+import LoadingSpinner from '../../../Loader';
 
 
 const StyledContainer = styled.div`
@@ -31,28 +32,58 @@ const StyledHeading = styled.h2`
 `;
 
 const LoginPage = () => {
+  const [loading, setLoading]=useState(false);
   const history = useHistory();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
 
   const handleLogin = async (username, password) => {
-    const { success, error } = await login(username, password);
-    if (success) {
-      showToast('Log in success', 'success');
-      history.push('/admin'); 
-    } else {
-      showToast(error, 'error');
+    try{
+      setLoading(true);
+      const { success, error } = await login(username, password);
+      if (success) {
+        showToast('Log in success', 'success');
+        history.push('/admin'); 
+      } else {
+        showToast(error, 'error');
+      }
+    }catch(error){
+      showToast("can't log in", 'error' );
     }
+      finally{
+      setLoading(false)
+    }
+    
   };
 
-  return (
-    <StyledContainer>
-      <StyledCard>
-        <StyledHeading>Login</StyledHeading>
-        <LoginForm onLogin={handleLogin} />
-      </StyledCard>
+  const Authenticate=()=>{
+    if(isAuthenticated){
+      history.push('/admin');
+    }
+  }
+
+  useEffect(()=>{
+    Authenticate()
+  }, [])
+  if(loading){
+    return(
+      <>
+      <LoadingSpinner />
       <ToastContainer style={{ zIndex: 99999999999 }} />
-    </StyledContainer>
-  );
-};
+      </>
+    );
+  }else{
+    return (
+      <StyledContainer>
+        <StyledCard>
+          <StyledHeading ><Link to='/'>Login</Link></StyledHeading>
+          <LoginForm onLogin={handleLogin} />
+        </StyledCard>
+        <ToastContainer style={{ zIndex: 99999999999 }} />
+      </StyledContainer>
+    );
+  }
+  }
+
+  
 
 export default LoginPage;

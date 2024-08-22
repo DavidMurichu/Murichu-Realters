@@ -3,10 +3,11 @@ import { Card, CardContent, Typography, Avatar, Box, IconButton, Tooltip, Grid, 
 import { Email, Phone, LocationCity, Home, WhatsApp } from '@mui/icons-material';
 import { keyframes } from '@emotion/react';
 import RecentCardCustom from '../../Container/RecentCardCustom';
-import { FetchData } from '../../appService/Delay';
+import { FetchData, PostData } from '../../appService/Delay';
 import { useLocation, useHistory } from 'react-router-dom';
 import AgentPropertyCard from './AgentPropertyCard';
 import AgentFormCard from './AgentForm';
+import { toast } from 'react-toastify';
 
 
 
@@ -23,12 +24,14 @@ const fadeIn = keyframes`
 `;
 
 
-  const AgentFormsCard = () => {
+  const AgentFormsCard = ({agent}) => {
     const [formData, setFormData] = useState({
+      agent:agent.id,
       name: '',
-      phone: '',
+      phonenumber: '',
       email: '',
-      message: ''
+      message: '',
+      subject:''
     });
   
     const [errors, setErrors] = useState({});
@@ -44,29 +47,44 @@ const fadeIn = keyframes`
     const validate = () => {
       const newErrors = {};
       if (!formData.name) newErrors.name = 'Name is required';
-      if (!formData.phone) newErrors.phone = 'Phone is required';
-      else if (!/^[0-9]+$/.test(formData.phone)) newErrors.phone = 'Invalid phone number';
+      if (!formData.phonenumber) newErrors.phonenumber = 'Phonenumber is required';
+      else if (!/^[0-9]+$/.test(formData.phonenumber)) newErrors.phonenumber = 'Invalid phonenumber number';
       if (!formData.email) newErrors.email = 'Email is required';
       else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) newErrors.email = 'Invalid email address';
-      if (!formData.message) newErrors.message = 'Message is required';
+      if (!formData.message) newErrors.message = 'Message is required'; 
+      if (!formData.subject) newErrors.subject = 'Subject is required';
       return newErrors;
     };
   
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
       e.preventDefault();
       const validationErrors = validate();
       if (Object.keys(validationErrors).length > 0) {
         setErrors(validationErrors);
       } else {
-        console.log(formData);
-        setSubmitted(true);
-        setFormData({
-          name: '',
-          phone: '',
-          email: '',
-          message: ''
-        });
-        setErrors({});
+        formData.agent=agent.id
+        console.log(formData, 'with', agent);
+        try {
+          const response = await PostData('user-responses/', formData);
+          console.log('response status', response)
+          if (response['status']===201) {
+            setSubmitted(true);
+            setFormData({
+              name: '',
+              phonenumber: '',
+              email: '',
+              message: '',
+              subject:''
+            });
+            setErrors({});
+            toast.success('Message sent successfully');
+          } else {
+            toast.error('Failed to send message');
+          }
+        } catch (error) {
+          console.log('error', error);
+          toast.error('An error occurred while sending the message');
+        }
       }
     };
   
@@ -98,14 +116,14 @@ const fadeIn = keyframes`
               helperText={errors.name}
             />
             <TextField 
-              label="Phone" 
+              label="Phonenumber" 
               fullWidth 
               required 
-              name="phone"
-              value={formData.phone}
+              name="phonenumber"
+              value={formData.phonenumber}
               onChange={handleChange}
-              error={!!errors.phone}
-              helperText={errors.phone}
+              error={!!errors.phonenumber}
+              helperText={errors.phonenumber}
             />
             <TextField 
               label="Email" 
@@ -116,6 +134,16 @@ const fadeIn = keyframes`
               onChange={handleChange}
               error={!!errors.email}
               helperText={errors.email}
+            />
+            <TextField 
+              label="Subject" 
+              fullWidth 
+              required 
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
+              error={!!errors.subject}
+              helperText={errors.subject}
             />
             <TextField 
               label="Message" 
@@ -130,7 +158,7 @@ const fadeIn = keyframes`
               helperText={errors.message}
             />
             <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', width: '80%' }}>
-              {submitted ? 'Submitted' : 'Contact us'}
+             Contact us
             </Button>
           </Box>
         </CardContent>

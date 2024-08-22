@@ -1,11 +1,42 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-export const BASE_URL = 'https://danilo6789bhh.pythonanywhere.com/api';
+export const BASE_URL = 'http://127.0.0.1:8000/api';
 
 
 export const Delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+export const PostData= async(endpointPath, data, requiresAuth = false)=>{
+  try{
+  if(requiresAuth)
+    {
 
+    }
+    const response=await axios.post(BASE_URL+'/'+endpointPath, data);
+    console.log('user Response', response);
+    return response
+
+  }catch(error){
+    console.log('user Response error', error);
+    return error
+
+
+
+  }
+
+}
+export const DeleteData= async(endpointPath, id)=>{
+  try{
+  const response= await axios.delete(`${BASE_URL}/${endpointPath}/${id}/`);
+  if(response.status===204){
+    return true
+  }else{
+    return false
+  }
+  }catch(error){
+    console.log('Delete error', error);
+    return false
+  }
+}
 export const FetchData = async (endpointPath, setData, setLoading) => {
     try {
       setLoading(true);
@@ -39,3 +70,4 @@ export const FetchData = async (endpointPath, setData, setLoading) => {
     }
     return price.toString();
   };
+

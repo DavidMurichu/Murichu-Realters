@@ -179,20 +179,19 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
         <Grid item>
           <Autocomplete
             freeSolo
-            options={filteredOptions}
+            options={inputValue ? filteredOptions : []}
             getOptionLabel={(option) => option.label}
             onChange={handleLocationChange}
             inputValue={inputValue}
             onInputChange={handleInputChange}
             renderInput={(params) => (
               <TextField
-                
                 {...params}
                 sx={{
-                  minWidth: '200px',
-                  width: 'auto',
+                  minWidth: {xs:'auto', sm:'300px'},
+                  maxWidth: '100%',
                   margin: '1%',
-                  borderRadius: '2rem',
+                  borderRadius: '3rem',
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': {
                       borderColor: 'none',
@@ -242,6 +241,7 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
         <Grid item className='price-input'>
           <InputLabel htmlFor='min-price'>Min Price:</InputLabel>
           <TextField
+            placeholder='Enter min price'
             name='min-price'
             type='number'
             value={priceMin}
@@ -252,6 +252,7 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
         <Grid item className='price-input'>
           <InputLabel htmlFor='max-price'>Max Price:</InputLabel>
           <TextField
+            placeholder='Enter max price'
             name='max-price'
             type='number'
             value={sliderValue}

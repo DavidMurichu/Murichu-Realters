@@ -1,12 +1,30 @@
 from rest_framework import serializers
-from .models import Agents, Location, PropertyType, PropertyTenure, Properties, PropertyImages, UserResponse
+from .models import Agents, Location, PropertyType, PropertyTenure, Properties, PropertyImages, UserResponse, Blogs
 
 
 class UserResponsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=UserResponse
-        fields=['id', 'name', 'email', 'phonenumber', 'message', 'property']
+    property_name = serializers.SerializerMethodField()
+    property_address = serializers.SerializerMethodField()
+    agent = serializers.SerializerMethodField()
 
+    class Meta:
+        model = UserResponse
+        fields = ['id', 'name', 'email', 'phonenumber', 'message', 'property_name', 'property_address', 'agent', 'subject']
+
+    def get_agent(self, obj):
+        if obj.agent:
+            return obj.agent.name
+        return None
+    def get_property_name(self, obj):
+        if obj.property:
+            return obj.property.property_name
+        return None
+
+    def get_property_address(self, obj):
+        if obj.property:
+            return obj.property.property_address
+        return None
+    
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
@@ -27,6 +45,11 @@ class PropertyImagesSerializer(serializers.ModelSerializer):
         model = PropertyImages
         fields = ['id', 'image', 'property']
 
+class BlogsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Blogs
+        fields = ['id', 'title', 'body', 'image']
+
 class AgentSerializer(serializers.ModelSerializer):
     city = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
     class Meta:
@@ -42,9 +65,9 @@ class PropertiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Properties
         fields = [
-            'id', 'property_name','property_description', 'property_city', 'property_type', 
+            'id', 'property_name','property_description', 'property_city', 'property_type', 'features',
             'property_tenure', 'property_address', 'property_price', 
-            'property_bedrooms', 'agent'
+            'property_bedrooms', 'agent', 'is_active'
         ]
 
     def create(self, validated_data):
@@ -124,3 +147,8 @@ class PropertyGetSerializer(serializers.ModelSerializer):
     def get_agent(self, obj):
         return PropertyAgentGetSerializer(obj.agent, context=self.context).data
     
+class MessageSerializer(serializers.Serializer):
+    subject = serializers.CharField(max_length=100)
+    message = serializers.CharField()
+    email_from = serializers.CharField()
+    email = serializers.EmailField()
