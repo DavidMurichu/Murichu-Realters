@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Box, Typography, Grid, CircularProgress, TextField, Button, List, ListItem, ListItemText, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Container, Box, Typography, Grid, CircularProgress, TextField, Button, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Room, AttachMoney, Home, KingBed, ShoppingCart } from '@mui/icons-material';
@@ -18,7 +18,7 @@ const PropertyInformationPage = () => {
   const { property } = location.state || {};
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [formData, setFormData] = useState({
+  const [formData] = useState({
     name: '',
     surname: '',
     email: '',
@@ -65,14 +65,6 @@ const PropertyInformationPage = () => {
 
   const agent = property.agent;
 
-  const dummyFeatures = [
-    "Main bedroom with built-in cupboards, walk-in closet and wooden floors",
-    "Bedroom 2 with built-in cupboards and wooden floors",
-    "Bedroom 3 with built-in cupboards and wooden floors",
-    "Bathroom with french doors, bidet, double basin, double shower, jacuzzi bath, toilet and tiled floors",
-    "Reception room with chandelier, french doors, granite flooring and marble floors",
-    "Entrance hall with chandelier, high ceilings, staircase, granite flooring and marble floors",
-  ];
 
   const handleSubmit = async (values, { resetForm }) => {
     console.log('Form data:', values);
@@ -277,13 +269,7 @@ const PropertyInformationPage = () => {
                 <Typography variant="h6" gutterBottom sx={{ color: '#000' }}>
                   Features
                 </Typography>
-                <List sx={{ listStyleType: 'disc', pl: 3 }}>
-                  {(Array.isArray(features) && features.length > 0 ? features : dummyFeatures).map((feature, index) => (
-                    <ListItem key={index} sx={{ display: 'list-item', py: 0 }}>
-                      <ListItemText primary={feature} />
-                    </ListItem>
-                  ))}
-                </List>
+                <Typography dangerouslySetInnerHTML={{__html: features}}   />
               </Box>
             </Grid>
           </Grid>
@@ -393,9 +379,7 @@ const PropertyInformationPage = () => {
           </Grid>
 
           <Box p={2} bgcolor="#f0f0f0" borderRadius={8} mb={3}>
-            <Typography variant="body1" paragraph sx={{ color: '#000' }}>
-              {property_description}
-            </Typography>
+          <Typography dangerouslySetInnerHTML={{__html: property_description}}   />
           </Box>
         </Box>
       </Box>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import LoginPage from '../admin/auth/Login/Login';
 import Header from '../common/header/Header';
@@ -34,23 +34,9 @@ import Blog from '../blog';
 import UserResponses from '../admin/dashboard/user-response/idex';
 import BlogManagement from '../admin/dashboard/Blogs';
 import AddBlog from '../admin/dashboard/Blogs/addblog';
+import { LoadingProvider } from '../appService/Loading';
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
-  const { isAuthenticated } = useAuth();
 
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        isAuthenticated ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
-        )
-      }
-    />
-  );
-};
 
 const AdminRoute = ({ component: Component, ...rest }) => {
   const { isAuthenticated } = useAuth();
@@ -72,6 +58,7 @@ const AdminRoute = ({ component: Component, ...rest }) => {
 
 const Pages = () => {
   return (
+    <LoadingProvider>
     <AuthProvider>
       <DataProvider>
         <CompareProvider>
@@ -80,7 +67,6 @@ const Pages = () => {
               <ScrollTop />
               <Switch>
                 <Route path="/login" component={LoginPage} />
-
                 <AdminRoute path="/admin/manage-property" component={PropertyManagement} />
                 <AdminRoute path="/admin/add-property" component={AddPropertyForm} />
                 <AdminRoute path="/admin/city" component={City} />
@@ -120,6 +106,7 @@ const Pages = () => {
         </CompareProvider>
       </DataProvider>
     </AuthProvider>
+    </LoadingProvider>
   );
 };
 

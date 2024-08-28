@@ -136,14 +136,20 @@ const ContactForm = ({ open, handleClose, property }) => {
 };
 const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
   const { compare, setCompare } = useContext(CompareContext);
-  const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
+  const { setPropertyTenure } = useContext(TenureContext);
 
   const [items, setItems] = useState(list);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [openContactForm, setOpenContactForm] = useState(false);
   const [openImageViewer, setOpenImageViewer] = useState(false);
   const [images, setImages] = useState([]);
+  const [visibleItemsCount, setVisibleItemsCount] = useState(6); 
   const history = useHistory();
+
+  const handleViewMore = () => {
+    setVisibleItemsCount((prevCount) => prevCount + 6); // Show 6 more items
+};
+
 
   useEffect(() => {
     setItems(list);
@@ -202,7 +208,7 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
         </Box>
       ) : (
         <Grid container spacing={3} mt={2} style={{margin:{xs:'10px', sm:0 }, maxWidth:'100%'}}>
-          {items.map((val) => (
+         {items.slice(0, visibleItemsCount).map((val) => (
             <Grid item xs={12} sm={6} md={4} key={val.id} sx={{ m: { xs: 3, sm: 0 } }}>
               <StyledCard sx={{ boxShadow: 3 }}>
                 <Box
@@ -269,7 +275,7 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
 
                     {!handleDelete &&
                     (
-<IconButton
+                    <IconButton
                       onClick={(e) => {
                         e.stopPropagation();
                         handleContact(val);
@@ -277,15 +283,13 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
                       sx={{ position: 'absolute', bottom: 10, right: 10, color: 'green' }}
                     >
                       <Mail />
-                                            <Typography variant="caption" color="green">
-                                            Contact
-                                          </Typography>
-                                        </IconButton>
+                      <Typography variant="caption" color="green">
+                          Contact
+                      </Typography>
+                    </IconButton>
 
                     )
                     }
-                    
-
                                       </CardContent>
                                     </Box>
                                     <Box className="hover-icons">
@@ -342,9 +346,31 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
                                     </Box>
                                   </StyledCard>
                                 </Grid>
-                              ))}
+                              ))} 
+                            
                             </Grid>
+                          )}{visibleItemsCount < items.length && (
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                              <Typography 
+                                variant="body1" 
+                                sx={{ 
+                                  cursor: 'pointer', 
+                                  color: 'primary.main', 
+                                  fontWeight: 'bold', 
+                                  fontSize: '1rem', 
+                                  textDecoration: 'underline',
+                                  '&:hover': {
+                                    color: 'secondary.main',
+                                    textDecoration: 'none',
+                                  }
+                                }} 
+                                onClick={handleViewMore}
+                              >
+                                View More
+                              </Typography>
+                            </Box>
                           )}
+                          
                           <ToastContainer style={{ zIndex: 9999999999 }} />
                           {selectedProperty && (
                             <ContactForm
@@ -362,6 +388,8 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
                             <Button onClick={() => setOpenImageViewer(false)}>Close</Button>
                           </DialogActions>
                         </Dialog>
+                       
+
                         </>
                       );
                     };

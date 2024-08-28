@@ -1,10 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import './header.css';
-import { navigationData } from '../../data/Data';
 import { Link, useHistory } from 'react-router-dom';
 import { CompareContext } from '../../appService/compareService';
 import { TenureContext } from '../../appService/TenureProvider';
-import { showToast } from '../../appService/Toast/Toast';
 import logo from '../../images/logo.png'
 
 const isLoggedIn = () => {

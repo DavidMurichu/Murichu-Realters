@@ -39,7 +39,9 @@ export const DeleteData= async(endpointPath, id)=>{
 }
 export const FetchData = async (endpointPath, setData, setLoading) => {
     try {
-      setLoading(true);
+      if(setLoading){
+        setLoading(true);
+      }
       const response = await axios.get(`${BASE_URL}/${endpointPath}/`);
       setData(Array.isArray(response.data) 
         ? response.data.map(item => ({ ...item, selected: false })) 
@@ -54,7 +56,9 @@ export const FetchData = async (endpointPath, setData, setLoading) => {
       toast.error('Failed to fetch data. Please try again.'); // Notify user of error
       setData([]); // Clear data on error
     } finally {
-      setLoading(false);
+      if(setLoading){
+        setLoading(false);
+      }
     }
   };
 

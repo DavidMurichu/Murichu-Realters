@@ -7,7 +7,6 @@ import { TenureContext } from '../../appService/TenureProvider';
 
 const HeroFilter = () => {
     const [properties, setProperties] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [filteredProperties, setFilteredProperties] = useState([]);
     const { setPropertyTenure, setLocation, tenures } = useContext(TenureContext);
@@ -15,7 +14,7 @@ const HeroFilter = () => {
     const history = useHistory();
 
     const fetch = async () => {
-        await FetchData('get-properties', setProperties, setLoading);
+        await FetchData('get-properties', setProperties);
     };
 
    
@@ -23,20 +22,23 @@ const HeroFilter = () => {
         fetch();
     }, []);
 
-    const handleSearchChange = (event, newValue) => {
-        const term = newValue.toLowerCase();
-        setInputValue(newValue);
-        setLocation(newValue); // Update location in context
+    // HeroFilter handleSearchChange
+const handleSearchChange = (event, newValue) => {
+    const term = newValue.toLowerCase();
+    setInputValue(newValue);
+    const city = newValue.split(',')[0].trim(); // Assuming city is always first
+    setLocation(city); // Update location in context
     
-        const filtered = properties
-            .filter(property =>
-                property.property_city.toLowerCase().includes(term) || 
-                property.property_address.toLowerCase().includes(term)
-            )
-            .sort((a, b) => a.property_city.localeCompare(b.property_city));
+    const filtered = properties
+        .filter(property =>
+            property.property_city.toLowerCase().includes(term) || 
+            property.property_address.toLowerCase().includes(term)
+        )
+        .sort((a, b) => a.property_city.localeCompare(b.property_city));
     
-        setFilteredProperties(filtered);
-    };
+    setFilteredProperties(filtered);
+};
+
     
 
     const handleItemClick = async (payload, path) => {

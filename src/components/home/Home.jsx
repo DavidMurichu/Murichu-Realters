@@ -1,7 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Box } from '@mui/material';
 import LoadingSpinner from '../Loader';
-import { Delay } from '../appService/Delay';
 
 
 
@@ -17,20 +16,12 @@ const Team = lazy(() => import('./team/Team'));
 const Home = () => {
   return (
     <Box>
-      <Suspense fallback={<LoadingSpinner  />}>
+     <Suspense fallback={<LoadingSpinner message="Loading Team..." />}>
         <Hero />
-      </Suspense>
-      <Suspense fallback={<LoadingSpinner />}>
         <Featuredlink />
-      </Suspense>
-      <Suspense fallback={<LoadingSpinner  />}>
         <Location />
-      </Suspense>
-      <Suspense fallback={<LoadingSpinner message="Loading Team..." />}>
         <Team />
-      </Suspense>
-     
-
+        </Suspense>
     </Box>
   );
 };

@@ -1,25 +1,11 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import './AdvancedFilter.css';
-import { InputLabel, MenuItem, Select, Grid, useMediaQuery, useTheme, TextField, Autocomplete, Typography, Button } from '@mui/material';
+import { InputLabel, MenuItem, Select, Grid, useMediaQuery, useTheme, TextField, Autocomplete } from '@mui/material';
 import { TenureContext } from '../appService/TenureProvider';
-import { styled } from '@mui/system';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import fuzzysort from 'fuzzysort';
 
-const StyledTextField = styled(TextField)({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: '20px',
-    '& fieldset': {
-      borderColor: '#27ae60',
-    },
-    '&:hover fieldset': {
-      borderColor: '#27ae60',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#27ae60',
-    },
-  },
-});
+
 
 const getUniqueValues = (list, key) => {
   return [...new Set(list.map(item => item[key]))];
@@ -33,7 +19,7 @@ const fuzzySearch = (input, options) => {
 };
 
 const AdvanceFilter = ({ data, onFilterUpdate }) => {
-  const { propertyTenure, setPropertyTenure, location, setLocation } = useContext(TenureContext);
+  const { propertyTenure, setPropertyTenure, location, setLocation, tenures } = useContext(TenureContext);
 
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState(location);
@@ -126,24 +112,22 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
     <div className="card">
       <div className='tenure-filter'>
         <ul>
+        {tenures.map((tenure) => {
+        const formattedName = tenure.name.charAt(0).toUpperCase() + tenure.name.slice(1);
+        
+        return (
           <li
-            className={propertyTenure === 'rent' ? 'active' : ''}
-            onClick={() => handleTenureClick('rent')}
+            className={propertyTenure === tenure.name ? 'active' : ''}
+            onClick={() => handleTenureClick(tenure.name)}
+            key={tenure.name} // Add a unique key prop for each item
           >
-            For Rent
+            {tenure.name !== 'land' && <span>For </span>}
+            {formattedName}
           </li>
-          <li
-            className={propertyTenure === 'buy' ? 'active' : ''}
-            onClick={() => handleTenureClick('sale')}
-          >
-            For Sale
-          </li>
-          <li
-            className={propertyTenure === 'land' ? 'active' : ''}
-            onClick={() => handleTenureClick('land')}
-          >
-            Land
-          </li>
+        );
+      })}
+
+         
         </ul>
       </div>
      

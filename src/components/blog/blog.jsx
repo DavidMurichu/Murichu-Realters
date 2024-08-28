@@ -42,8 +42,12 @@ const StyledSection = styled('section')({
 // Styled component for the image
 const StyledImage = styled('img')({
   width: '100%',
+  maxHeight: '400px', // Limit the height of the image
   height: 'auto',
-  objectFit: 'cover',
+  objectFit: 'contain',
+  marginTop: '20px', // Space between text and image
+  borderRadius: '8px', // Rounded corners
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow
 });
 
 // Styled component for the text content
@@ -52,6 +56,17 @@ const TextContainer = styled(Box)({
   flexDirection: 'column',
   gap: '20px',
   marginTop: '20px',
+  lineHeight: 1.6, // Improve readability
+  color: '#333', // Darker text color
+  
+  // Style links within the content
+  '& a': {
+    color: '#27ae60', // Link color
+    textDecoration: 'underline',
+    '&:hover': {
+      color: '#1e8c4b', // Darker green on hover
+    }
+  }
 });
 
 const BlogDetails = ({ blog, onBack }) => {
@@ -68,15 +83,23 @@ const BlogDetails = ({ blog, onBack }) => {
           sx={{ 
             mb: 2, 
             textTransform: 'capitalize',
-            textAlign: 'center'
+            textAlign: 'center',
+            fontWeight: 'bold',
+            color: '#444' // Subtle color for the title
           }}
         >
           {blog.title}
         </Typography>
-        <StyledImage src={blog.image} alt={blog.title} />
         <TextContainer>
-          <Typography dangerouslySetInnerHTML={{__html: blog.body}} sx={{ mt: 2 }} />
+          <Typography 
+            dangerouslySetInnerHTML={{__html: blog.body}} 
+            sx={{ 
+              mt: 2, 
+              textAlign: 'justify' // Better alignment for text
+            }} 
+          />
         </TextContainer>
+        <StyledImage src={blog.image} alt={blog.title} />
       </Container>
     </StyledSection>
   );

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import GenericForm from '../../Layouts/formlayout';
 import { ToastContainer, toast } from 'react-toastify';
-import { BASE_URL, Delay, FetchData } from '../../../appService/Delay';
-import axios from 'axios';
+import { FetchData } from '../../../appService/Delay';
 import AddPropertyImageForm from './AddPropertyImage';
+import ApiService from '../../../appService/data/PostData';
 
 const AddPropertyForm = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +19,6 @@ const AddPropertyForm = () => {
   });
 
   const [cities, setCities] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [property_types, setProperty_types] = useState([]);
   const [property_tenures, setProperty_tenures] = useState([]);
   const [agents, setAgents] = useState([]);
@@ -32,18 +31,8 @@ const AddPropertyForm = () => {
       const token = localStorage.getItem('access_token');
       console.log('local token', token);
       
-      // Convert features string to array
-      const featuresArray = formData.features.split(',').map(feature => feature.trim());
-      
-      const response = await axios.post(`${BASE_URL}/properties/`, {
-        ...formData,
-        features: featuresArray
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
+  
+      const response= await ApiService.post('properties', formData);
 
       console.log('response property', response);
       if (response.status === 201) {
@@ -71,10 +60,10 @@ const AddPropertyForm = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      await FetchData('locations', setCities, setLoading);
-      await FetchData('property-types', setProperty_types, setLoading);
-      await FetchData('property-tenures', setProperty_tenures, setLoading);
-      await FetchData('agents', setAgents, setLoading);
+      await FetchData('locations', setCities);
+      await FetchData('property-types', setProperty_types);
+      await FetchData('property-tenures', setProperty_tenures);
+      await FetchData('agents', setAgents);
     };
   
     fetch();
@@ -97,8 +86,8 @@ const AddPropertyForm = () => {
     { name: 'agent', label: 'Agent', type: 'select', 
       options: agents.map(agent => ({ value: agent.id, label: agent.name })),
       required: true },
-    { name: 'property_description', label: 'Property Description', type: 'text', required: true },
-    { name: 'features', label: 'Property Features (comma-separated)', type: 'text', required: false } // New field
+    { name: 'features', label: 'Property Features', type: 'text-editor', required: true },
+    { name: 'property_description', label: 'Property Description', type: 'text-editor', required: true },
   ];
 
   return (
