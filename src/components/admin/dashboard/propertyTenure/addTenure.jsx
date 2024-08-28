@@ -11,6 +11,7 @@ const AddPropertyTenureForm = () => {
   const history=useHistory();
   const [formData, setFormData]=useState({
     name:'',
+    description:''
    
   });
 
@@ -31,7 +32,7 @@ const AddPropertyTenureForm = () => {
   const propertyFields=[
 
     { name: 'name', label: 'Property Tenure', type: 'text', required: true },
-    { name: 'description', label: 'Description', type: 'text', required: false },
+    { name: 'description', label: 'Description', type: 'text', required: true },
    
 
 ]

@@ -34,37 +34,41 @@ const AgentPropertyCard = ({ agent }) => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      maxWidth: '100%',
+      
+      '@media (max-width: 600px)': {
+        padding: '10px',
+      },
     }}>
-      <Avatar src={agent.profile_image} alt={agent.name} sx={{ width: 100, height: 100, marginBottom: 2 }} />
+      <Avatar src={agent.profile_image} alt={agent.name} sx={{ width: 80, height: 80, marginBottom: 2, '@media (max-width: 600px)': { width: 60, height: 60 } }} />
       <CardContent sx={{ textAlign: 'center', width: '100%' }}>
-        <Typography variant="h5" component="div" sx={{ marginBottom: 2 }}>{agent.name}</Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'space-around', marginBottom: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography variant="h6" component="div" sx={{ marginBottom: 1, fontSize: '1.2rem', '@media (max-width: 600px)': { fontSize: '1rem' } }}>{agent.name}</Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
             <Phone sx={{ marginRight: 1 }} />
-            <Typography variant="body1">{agent.phone}</Typography>
+            <Typography variant="body2" sx={{ fontSize: '0.9rem', '@media (max-width: 600px)': { fontSize: '0.8rem' } }}>{agent.phone}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
             <Email sx={{ marginRight: 1 }} />
-            <Typography variant="body1">{agent.email}</Typography>
+            <Typography variant="body2" sx={{ fontSize: '0.9rem', '@media (max-width: 600px)': { fontSize: '0.8rem' } }}>{agent.email}</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+            <LocationCity sx={{ marginRight: 1 }} />
+            <Typography variant="body2" sx={{ fontSize: '0.9rem', '@media (max-width: 600px)': { fontSize: '0.8rem' } }}>{agent.city_name}</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+            <Home sx={{ marginRight: 1 }} />
+            <Typography variant="body2" sx={{ fontSize: '0.9rem', '@media (max-width: 600px)': { fontSize: '0.8rem' } }}>{agent.properties_count} properties</Typography>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-around', marginBottom: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <LocationCity sx={{ marginRight: 1 }} />
-            <Typography variant="body1">{agent.city_name}</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Home sx={{ marginRight: 1 }} />
-            <Typography variant="body1">{agent.properties_count} properties</Typography>
-          </Box>
-        
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
           <Tooltip title="Send WhatsApp Message">
-            <IconButton href={whatsappUrl} target="_blank" rel="noopener noreferrer" color="primary">
+            <IconButton href={whatsappUrl} target="_blank" rel="noopener noreferrer" color="primary" sx={{ fontSize: '1.5rem', '@media (max-width: 600px)': { fontSize: '1.2rem' } }}>
               <WhatsApp />
             </IconButton>
           </Tooltip>
           <Tooltip title="Send Email">
-            <IconButton href={mailtoUrl} target="_blank" rel="noopener noreferrer" color="primary">
+            <IconButton href={mailtoUrl} target="_blank" rel="noopener noreferrer" color="primary" sx={{ fontSize: '1.5rem', '@media (max-width: 600px)': { fontSize: '1.2rem' } }}>
               <Email />
             </IconButton>
           </Tooltip>

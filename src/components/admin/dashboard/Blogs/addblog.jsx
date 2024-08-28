@@ -26,7 +26,7 @@ title: '',
           });
     if (response.status === 201) {
      
-        toast.success('Images added successfully');
+        toast.success('Blog added successfully');
         await Delay(1000);
         history.push('/admin/blogs');
       } else {
@@ -42,9 +42,10 @@ title: '',
 
   const propertyFields = [
     { name: 'title', label: 'Blog Title', type: 'text', required: true },
-    { name: 'body', label: 'Blog Body', type: 'text', 
-      required: true },
+   
     { name: 'image', label: 'Blog Image', type: 'file', required: true },
+    { name: 'body', label: 'Blog Body', type: 'text-editor', 
+    required: true },
   ];
 
   return (

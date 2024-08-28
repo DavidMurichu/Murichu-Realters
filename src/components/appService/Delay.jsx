@@ -68,6 +68,6 @@ export const FetchData = async (endpointPath, setData, setLoading) => {
     if (price >= 1_000) {
       return `${(price / 1_000).toFixed(1)}K`;
     }
-    return price.toString();
+    return price;
   };
 

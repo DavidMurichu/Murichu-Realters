@@ -3,6 +3,7 @@ import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRo
 import { DeleteData, FetchData, PostData } from '../../../appService/Delay'; 
 import { styled } from '@mui/material/styles';
 import { ToastContainer, toast } from 'react-toastify';
+import ContactDetails from './viewmore'; // Adjust the path as needed
 
 const SmallButton = styled(Button)({
   fontSize: '0.75rem', 
@@ -23,7 +24,9 @@ const ButtonContainer = styled(Box)({
 const UserResponses = () => {
   const [loading, setLoading] = useState(false);
   const [responses, setResponses] = useState([]);
-  const [open, setOpen] = useState(false); // Modal state
+  const [open, setOpen] = useState(false); // Modal state for sending message
+  const [showDetails, setShowDetails] = useState(false); // State for showing ContactDetails
+  const [selectedResponse, setSelectedResponse] = useState(null); // State to store selected response
   const [formData, setFormData] = useState({
     subject: '',
     message: '',
@@ -63,15 +66,15 @@ const UserResponses = () => {
   const handleSubmit = async() => {
     // Logic to send the message using formData
     const response= await PostData('send-email/', formData, true);
-    console.log('succcc', response);
-    if(response.status===200){
-        toast.success('email sent successfully')
+    if(response.status === 200){
+        toast.success('Email sent successfully');
     }
     handleClose();
   };
 
   const handleViewMore = (response) => {
-    alert(`Viewing details for ${response.name}`);
+    setSelectedResponse(response); // Set the selected response
+    setShowDetails(true); // Show the ContactDetails component
   };
 
   const handleDelete = async (id) => {
@@ -79,16 +82,15 @@ const UserResponses = () => {
     if (confirm) {
       setLoading(true);
       try {
-        const response=await DeleteData('user-responses', id)
-        if(response===true){
-            setResponses((prevResponses) => prevResponses.filter(response => response.id !== id));
-            toast.success('deleted')
-        }else{
-            toast.error('delete failed')
+        const response = await DeleteData('user-responses', id);
+        if (response === true) {
+          setResponses((prevResponses) => prevResponses.filter(response => response.id !== id));
+          toast.success('Deleted successfully');
+        } else {
+          toast.error('Delete failed');
         }
-       
       } catch (error) {
-        alert('Error deleting response');
+        toast.error('Error deleting response');
       } finally {
         setLoading(false);
       }
@@ -109,20 +111,18 @@ const UserResponses = () => {
               <TableCell>Name</TableCell>
               <TableCell>Contact</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Message</TableCell>
               <TableCell>Property Name</TableCell>
               <TableCell>Agent</TableCell>
-              <TableCell >Action</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {responses.map((response, index) => (
               <TableRow key={response.id}>
-                <TableCell>{index+1}</TableCell>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>{response.name}</TableCell>
                 <TableCell>{response.phonenumber}</TableCell>
                 <TableCell>{response.email}</TableCell>
-                <TableCell>{response.message}</TableCell>
                 <TableCell>{response.property_name || 'N/A'}</TableCell>
                 <TableCell>{response.agent || 'N/A'}</TableCell>
                 <TableCell>
@@ -154,7 +154,7 @@ const UserResponses = () => {
             ))}
           </TableBody>
         </Table>
-        <ToastContainer/>
+        <ToastContainer />
       </StyledTableContainer>
 
       {/* Modal for Sending Message */}
@@ -205,8 +205,22 @@ const UserResponses = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
 
+      {/* Contact Details Dialog */}
+      {showDetails && (
+        <Dialog open={showDetails} onClose={() => setShowDetails(false)} fullWidth maxWidth="sm">
+          <DialogTitle>Contact Details</DialogTitle>
+          <DialogContent>
+            <ContactDetails data={selectedResponse} />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowDetails(false)} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </Box>
   );
 };
 

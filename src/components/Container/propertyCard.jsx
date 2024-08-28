@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Box, Typography, Grid, CircularProgress, TextField, Button, List, ListItem, ListItemText, Card, CardContent } from '@mui/material';
+import { Container, Box, Typography, Grid, CircularProgress, TextField, Button, List, ListItem, ListItemText, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Room, AttachMoney, Home, KingBed, ShoppingCart } from '@mui/icons-material';
@@ -9,7 +9,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { Delay } from '../appService/Delay';
+import { BASE_URL, Delay, formatPrice } from '../appService/Delay';
+import ImageViewer from './ImageCard';
 
 const PropertyInformationPage = () => {
   const location = useLocation();
@@ -25,7 +26,12 @@ const PropertyInformationPage = () => {
     message: '',
     property_id: property?.id ?? null,
   });
-
+  const [openImageViewer, setOpenImageViewer] = useState(false);
+  const [images, setImages] = useState([]);
+  const handleImageClick = (val) => {
+    setImages(val.property_images); 
+    setOpenImageViewer(true); 
+  };
 
   const validationSchema = yup.object({
     name: yup.string().required('Name is required'),
@@ -68,15 +74,10 @@ const PropertyInformationPage = () => {
     "Entrance hall with chandelier, high ceilings, staircase, granite flooring and marble floors",
   ];
 
-  const openCarousel = (index) => {
-    setPhotoIndex(index);
-    setIsOpen(true);
-  };
-
   const handleSubmit = async (values, { resetForm }) => {
     console.log('Form data:', values);
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/user-responses/', values);
+      const response = await axios.post(`${BASE_URL}/user-responses/`, values);
       if (response.status === 201) {
         toast.success('Request sent successfully');
         resetForm();
@@ -93,39 +94,42 @@ const PropertyInformationPage = () => {
   return (
     <Container maxWidth="xl" disableGutters sx={{ overflowX: 'hidden', px: 1 }}>
       <Box>
-        <Box position="relative" width="100%" bgcolor="#f0f0f0">
+        {/* Carousel */}
+        <Box position="relative" width="100%" mb={3}>
           <Carousel
             showThumbs={false}
             showStatus={false}
             infiniteLoop
             useKeyboardArrows
-            onClickItem={(index) => openCarousel(index)}
+            onClickItem={(index) => handleImageClick(property)}
             sx={{
-              maxHeight: { xs: '50vh', md: '70vh' },
               '& .carousel .slide img': {
-                height: { xs: '50vh', md: '70vh' },
+                height: '60vh',
                 objectFit: 'cover',
               },
             }}
           >
             {property_images.map((src, index) => (
               <div key={index} style={{ width: '100%' }}>
-                <img src={src} alt={`property-${index}`} style={{ width: '100%', height: '70vh', objectFit: 'cover' }} />
+                <img src={src} alt={`property-${index}`} style={{ width: '100%', height: '60vh', objectFit: 'cover' }} />
               </div>
             ))}
           </Carousel>
           <Button
             variant="contained"
-            onClick={() => openCarousel(0)}
+            onClick={() => handleImageClick(property)}
             sx={{
               borderRadius: '5px',
-              background: 'white',
-              color: 'black',
+              background: '#27ae60',
+              color: '#fff',
               position: 'absolute',
               bottom: '16px',
               left: '50%',
               transform: 'translateX(-50%)',
-              fontSize: { xs: '0.75rem', md: '1rem' },
+              fontSize: '1rem',
+              '&:hover': {
+                background: '#219150',
+              },
             }}
           >
             Gallery
@@ -133,23 +137,24 @@ const PropertyInformationPage = () => {
         </Box>
 
         {/* Name Address Card */}
-        <Box mt={-1} mb={3} textAlign="center" width="100%">
+        <Box textAlign="center" width="100%" mb={3}>
           <Card
             sx={{
               width: '100%',
               backgroundColor: '#27ae60',
               color: '#fff',
-              zIndex: 2,
-              px: { xs: 1, sm: 2 },
+              px: { xs: 2, sm: 3 },
+              py: 2,
+              boxShadow: 3,
             }}
           >
             <CardContent>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '1.75rem' } }}>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.75rem' } }}>
                 {property_name}
               </Typography>
-              <Typography variant="subtitle1" sx={{ fontSize: { xs: '0.75rem', sm: '1rem' } }}>
+              <Typography variant="h6" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' }, mt: 1 }}>
                 <Room sx={{ verticalAlign: 'middle', mr: 1 }} />
-                {property_address}, {property_city}, {property_price}
+                {property_address}, {property_city} - Ksh { formatPrice(property_price)}
               </Typography>
             </CardContent>
           </Card>
@@ -182,10 +187,10 @@ const PropertyInformationPage = () => {
               onClickItem={() => setIsOpen(false)}
               sx={{
                 width: '90%',
-                maxHeight: '90vh',
+                maxHeight: '80vh',
                 '& img': {
                   maxWidth: '100%',
-                  maxHeight: '90vh',
+                  maxHeight: '80vh',
                   objectFit: 'contain',
                 },
               }}
@@ -198,6 +203,7 @@ const PropertyInformationPage = () => {
             </Carousel>
           </Box>
         )}
+
 
         <Box p={2} bgcolor="#f0f0f0" borderRadius={8} mb={3} marginX={{ xs: 1, md: 10 }} mt={0}>
           <Grid container spacing={3}>
@@ -246,7 +252,7 @@ const PropertyInformationPage = () => {
                     fontSize: { xs: '0.75rem', sm: '1rem' },
                   }}
                 >
-                  <AttachMoney sx={{ verticalAlign: 'middle', mr: 1 }} /> Price: Ksh: {property_price}
+                  <AttachMoney sx={{ verticalAlign: 'middle', mr: 1 }} /> Price: Ksh: {formatPrice(property_price)}
                 </Typography>
                 <Typography
                   variant="body1"
@@ -379,7 +385,7 @@ const PropertyInformationPage = () => {
                     Agent Information
                   </Typography>
                   <Box display="flex" justifyContent="center">
-                    <AgentCardCustom list={[agent]} isAdmin={false} sx={{ width: '100%' }} />
+                    <AgentCardCustom list={[agent]} isAdmin={false} />
                   </Box>
                 </Box>
               </Box>
@@ -393,6 +399,15 @@ const PropertyInformationPage = () => {
           </Box>
         </Box>
       </Box>
+      <Dialog open={openImageViewer} onClose={() => setOpenImageViewer(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Property Images</DialogTitle>
+        <DialogContent>
+          <ImageViewer images={images} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenImageViewer(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

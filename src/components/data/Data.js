@@ -1,4 +1,6 @@
 
+
+
 export const compare=0
 
 export const images=[
@@ -90,19 +92,7 @@ export const navigationData = [
     text: "home",
     path: "/",
   },
-  {
-    text: "Buy",
-    path: "/listings",
-    payload: "buy"
-  },
-  {
-    text: "Rent",
-    path: "/listings",
-    payload: "rent"
-  },
- 
   
- 
   {
     text: "about",
     path: "/about",

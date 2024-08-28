@@ -112,7 +112,7 @@ const AgentCardCustom = ({ list, isAdmin }) => {
         <Grid container spacing={2} mt={2}>
           {items.map((val) => (
             <Grid item xs={12} sm={6} md={4} key={val.id}>
-              <StyledCard sx={{ boxShadow: 3, p: { xs: 1, sm: 2 } }}>
+              <StyledCard sx={{ boxShadow: 3, p: { xs: 1, sm: 2 }, borderRadius: '8px' }}>
                 <CardMedia
                   component="img"
                   image={val.profile_image}
@@ -125,8 +125,8 @@ const AgentCardCustom = ({ list, isAdmin }) => {
                   }}
                 />
                 <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
-                  <Typography variant="h6" noWrap sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>{val.name}</Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                  <Typography variant="h6" noWrap sx={{ fontSize: { xs: '1rem', sm: '1.2rem' }, mb: 1 }}>{val.name}</Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1, mb: 1 }}>
                     <IconButton href={`tel:${val.phone}`} sx={{ color: '#27ae60', p: 1 }}>
                       <Phone />
                     </IconButton>
@@ -137,10 +137,10 @@ const AgentCardCustom = ({ list, isAdmin }) => {
                       <Email />
                     </IconButton>
                   </Box>
-                  <Typography variant="body2" color="textSecondary" fontSize='14px' sx={{ mt: 1 }}>
+                  <Typography variant="body2" color="textSecondary" fontSize='14px' sx={{ mb: 1 }}>
                     {val.email}, {val.phone}
                   </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="h6" color="primary" sx={{
                       borderRadius: '20px',
                       fontSize: { xs: '0.9rem', sm: '1rem' },
@@ -166,7 +166,7 @@ const AgentCardCustom = ({ list, isAdmin }) => {
           ))}
         </Grid>
       ) : (
-        <StyledCard sx={{ boxShadow: 3, maxWidth: '100%', p: { xs: 1, sm: 2 } }}>
+        <StyledCard sx={{ boxShadow: 3, maxWidth: '100%', p: { xs: 1, sm: 2 }, borderRadius: '8px' }}>
           <CardMedia
             component="img"
             image={items[0].profile_image}
@@ -179,8 +179,8 @@ const AgentCardCustom = ({ list, isAdmin }) => {
             }}
           />
           <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
-            <Typography variant="h6" noWrap sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>{items[0].name}</Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+            <Typography variant="h6" noWrap sx={{ fontSize: { xs: '1rem', sm: '1.2rem' }, mb: 1 }}>{items[0].name}</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1, mb: 1 }}>
               <IconButton href={`tel:${items[0].phone}`} sx={{ color: '#27ae60', p: 1 }}>
                 <Phone />
               </IconButton>
@@ -191,10 +191,10 @@ const AgentCardCustom = ({ list, isAdmin }) => {
                 <Email />
               </IconButton>
             </Box>
-            <Typography variant="body2" color="textSecondary" fontSize='14px' sx={{ mt: 1 }}>
+            <Typography variant="body2" color="textSecondary" fontSize='14px' sx={{ mb: 1 }}>
               {items[0].email}, {items[0].phone}
             </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h6" color="primary" sx={{
                 borderRadius: '20px',
                 fontSize: { xs: '0.9rem', sm: '1rem' },
@@ -217,7 +217,7 @@ const AgentCardCustom = ({ list, isAdmin }) => {
             </Box>}
         </StyledCard>
       )}
-      <ToastContainer style={{ zIndex: 9999999999 }} />
+      <ToastContainer />
     </>
   );
 };

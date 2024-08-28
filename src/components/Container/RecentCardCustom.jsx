@@ -7,6 +7,7 @@ import { CompareContext } from '../appService/compareService';
 import { ToastContainer, toast } from 'react-toastify';
 import { TenureContext } from '../appService/TenureProvider';
 import { PostData, formatPrice } from '../appService/Delay';
+import ImageViewer from './ImageCard';
 
 const fadeIn = keyframes`
   from {
@@ -48,6 +49,8 @@ const ContactForm = ({ open, handleClose, property }) => {
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  
+
 
   const handleSubmit = async () => {
     const formData = {
@@ -138,6 +141,8 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
   const [items, setItems] = useState(list);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [openContactForm, setOpenContactForm] = useState(false);
+  const [openImageViewer, setOpenImageViewer] = useState(false);
+  const [images, setImages] = useState([]);
   const history = useHistory();
 
   useEffect(() => {
@@ -146,7 +151,7 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
 
   const reloadPage = () => {
     setPropertyTenure('');
-    history.go(0);
+    window.location.reload();
   };
 
   const addCompare = (val) => {
@@ -169,10 +174,8 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
   };
 
   const handleImageClick = (val) => {
-    history.push({
-      pathname: `/view-photos/${val.id}`,
-      state: { images: val.property_images },
-    });
+    setImages(val.property_images); 
+    setOpenImageViewer(true); 
   };
 
   const toggleFavourite = (id) => {
@@ -192,13 +195,13 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
     <>
       {items.length === 0 || items === null ? (
         <Box sx={{ textAlign: 'center', p: 3, border: '1px solid #ccc', borderRadius: 1 }}>
-          <Typography variant="body1">No properties with the filter.</Typography>
+          <Typography variant="body1">No properties.</Typography>
           <Button onClick={reloadPage} variant="contained" color="primary" sx={{ mt: 2 }}>
             Reload
           </Button>
         </Box>
       ) : (
-        <Grid container spacing={3} mt={2} style={{margin:'10px', maxWidth:'100%'}}>
+        <Grid container spacing={3} mt={2} style={{margin:{xs:'10px', sm:0 }, maxWidth:'100%'}}>
           {items.map((val) => (
             <Grid item xs={12} sm={6} md={4} key={val.id} sx={{ m: { xs: 3, sm: 0 } }}>
               <StyledCard sx={{ boxShadow: 3 }}>
@@ -227,8 +230,8 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
                       <Chip
                         label={`For ${val.property_tenure}`}
                         sx={{
-                          backgroundColor: val.property_tenure === 'buy' ? '#25b5791a' : '#ff98001a',
-                          color: val.property_tenure === 'buy' ? '#25b579' : '#ff9800',
+                          backgroundColor: val.property_tenure === 'sale' ? '#25b5791a' : '#ff98001a',
+                          color: val.property_tenure === 'sale' ? '#25b579' : '#ff9800',
                         }}
                       />
                       <Button variant="outlined" color="primary" onClick={() => handleDisplay(val)}>
@@ -350,6 +353,15 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
                               property={selectedProperty}
                             />
                           )}
+                           <Dialog open={openImageViewer} onClose={() => setOpenImageViewer(false)} maxWidth="md" fullWidth>
+                          <DialogTitle>Property Images</DialogTitle>
+                          <DialogContent>
+                            <ImageViewer images={images} />
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={() => setOpenImageViewer(false)}>Close</Button>
+                          </DialogActions>
+                        </Dialog>
                         </>
                       );
                     };

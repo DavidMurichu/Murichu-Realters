@@ -3,30 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-
-
 import { Link } from 'react-router-dom';
-import { ToastContainer, toast } from "react-toastify";
 import Maincard from '../../Layouts/maincard';
-import { images, list, propertyData } from '../../../data/Data';
 import RecentCardCustom from '../../../Container/RecentCardCustom';
-import RecentCard from '../../../home/recent/RecentCard';
-import ImageViewer from '../../../Container/ImageCard';
-import PropertyInformationPage from '../../../Container/propertyCard';
 import { BASE_URL, FetchData } from '../../../appService/Delay';
 import axios from 'axios';
 import { showToast } from '../../../appService/Toast/Toast';
 
-
-const columns = [
-    { field: 'studentid', headerName: 'Pupils' },
-    { field: 'amount', headerName: 'Amount' },
-    { field: 'amount', headerName: 'Amount' },
-    { field: 'invoicedon', headerName: 'Invoice Date' },
-    { field: 'documentno', headerName: 'Document No' },
-    { field: 'remarks', headerName: 'Remarks' },
-    { field: 'created_at', headerName: 'Created At' }
-];
 
 function PropertyManagement() {
 

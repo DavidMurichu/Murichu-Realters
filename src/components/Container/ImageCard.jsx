@@ -1,109 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Box, Typography, Button, Grid, Card, CardMedia, CircularProgress } from '@mui/material';
-import { styled, keyframes } from '@mui/system';
-import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Import css
-import { Carousel } from 'react-responsive-carousel';
+import React from 'react';
+import { Dialog, DialogContent, IconButton, Box } from '@mui/material';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { styled } from '@mui/system';
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-const StyledCard = styled(Card)`
-  animation: ${fadeIn} 1s ease-in-out;
+const ImageContainer = styled(Box)`
   position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
 `;
 
-const ImageViewer = () => {
-  const [items, setItems] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
+const Image = styled('img')`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
 
-  const history = useHistory();
-  const location = useLocation();
-  const { images } = location.state || {};
+const ArrowButton = styled(IconButton)`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+`;
 
-  useEffect(() => {
-    if (!images) {
-      history.push('/');
-    }else{
-      setItems(images);
-    }
-  }, [images, history]);
+const LeftArrow = styled(ArrowButton)`
+  left: 10px;
+`;
 
-  if (!images) {
-    return <CircularProgress />;
-  }
+const RightArrow = styled(ArrowButton)`
+  right: 10px;
+`;
 
- 
+const ImageViewer = ({ images }) => {
+  const [currentIndex, setCurrentIndex] = React.useState(0);
 
-  const reloadPage = () => {
-    history.go(0);
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  const openLightbox = (index) => {
-    setPhotoIndex(index);
-    setIsOpen(true);
+  const handlePrevious = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
 
   return (
-    <>
-      {items.length === 0 ? (
-        <Box sx={{ textAlign: 'center', p: 3, border: '1px solid #ccc', borderRadius: 1 }}>
-          <Typography variant="body1">No properties with the filter.</Typography>
-          <Button onClick={reloadPage} variant="contained" color="primary" sx={{ mt: 2 }}>Reload</Button>
-        </Box>
-      ) : (
-        <Grid container spacing={3} mt={2}>
-          {items.map((src, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <StyledCard sx={{ boxShadow: 3 }} onClick={() => openLightbox(index)}>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={src}
-                  alt={`property-${index}`}
-                  sx={{ transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.05)' } }}
-                />
-              </StyledCard>
-            </Grid>
-          ))}
-        </Grid>
+    <ImageContainer>
+      <Image src={images[currentIndex]} alt="Property" />
+      {images.length > 1 && (
+        <>
+          <LeftArrow onClick={handlePrevious} sx={{background: 'black', color: 'white', '&:hover':{
+            background:'white', color:'black'
+          }}}>
+            <ArrowBack />
+          </LeftArrow>
+          <RightArrow onClick={handleNext}  sx={{background: 'black', color: 'white', '&:hover':{
+            background:'white', color:'black'
+          }}}>
+            <ArrowForward />
+          </RightArrow>
+        </>
       )}
-      {isOpen && (
-        <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
-          <Carousel
-            selectedItem={photoIndex}
-            showThumbs={false}
-            showStatus={false}
-            infiniteLoop={true}
-            useKeyboardArrows={true}
-            autoPlay={false}
-            onChange={(index) => setPhotoIndex(index)}
-            onClickItem={() => setIsOpen(false)}
-          >
-            {items.map((src, index) => (
-              <div key={index}>
-                <img src={src} alt={`property-${index}`} style={{ maxHeight: '100vh', objectFit: 'contain' }} />
-              </div>
-            ))}
-          </Carousel>
-        </Box>
-      )}
-      <ToastContainer style={{ zIndex: 9999999999 }} />
-    </>
+    </ImageContainer>
   );
 };
 

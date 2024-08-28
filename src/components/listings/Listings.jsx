@@ -50,18 +50,17 @@ const Listings = () => {
         <RecentCardCustom list={filteredList} />
         }
       </div>
-      {propertyData.length!==0&&
+      {/* {propertyData.length!==0&&
        <Box className='footerContact' justifyContent='center' style={{background:'#f8f9fa'}}>
        <StyledTitle>
      Similar Properties
          </StyledTitle>
  
          <Grid container className='container' justifyContent="center" alignItems="center"style={{background:'#f8f9fa'}}>
-        
-           <SingleCard items={propertyData || []} /> {/* Ensure items is an array */}
+           <SingleCard items={propertyData || []} />
          </Grid>
        </Box>
-      }
+      } */}
      
     </section>
 

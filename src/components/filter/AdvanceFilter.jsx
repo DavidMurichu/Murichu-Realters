@@ -34,6 +34,7 @@ const fuzzySearch = (input, options) => {
 
 const AdvanceFilter = ({ data, onFilterUpdate }) => {
   const { propertyTenure, setPropertyTenure, location, setLocation } = useContext(TenureContext);
+
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState(location);
   const [filteredData, setFilteredData] = useState([]);
@@ -63,10 +64,10 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
   };
 
   const handleLocationChange = (event, newValue) => {
-    const locationString=newValue ? newValue.label : ""
+    const locationString = newValue ? newValue.label : "";
     const [city, address] = locationString.split(',').map(part => part.trim());
-    setLocation(city);
-  };
+    setLocation(city); 
+};
 
   const handleInputChange = (event, newInputValue) => {
     setInputValue(newInputValue);
@@ -74,14 +75,6 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
 
   const handleTenureClick = (tenure) => {
     setPropertyTenure(tenure);
-    // Update slider values based on tenure
-    // if (tenure === 'buy') {
-    //   setSliderValue(1000000000);
-    //   setPriceMin(500000);
-    // } else if (tenure === 'rent') {
-    //   setSliderValue(100000);
-    //   setPriceMin(10000);
-    // }
   };
 
   const handleMinPrice = (event) => {
@@ -141,7 +134,7 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
           </li>
           <li
             className={propertyTenure === 'buy' ? 'active' : ''}
-            onClick={() => handleTenureClick('buy')}
+            onClick={() => handleTenureClick('sale')}
           >
             For Sale
           </li>

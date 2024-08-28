@@ -30,7 +30,8 @@ function BlogManagement() {
     const handleDelete = async (id) => {
         try {
           const response = await DeleteData('blogs', id)
-          if (response.status === 204) {
+          console.log('delet blog', response)
+          if (response === true) {
             showToast('Deleted successfully', 'success');
             SetBlogs((prevItems) => prevItems.filter((item) => item.id !== id));
           } else {

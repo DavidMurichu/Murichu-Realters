@@ -60,33 +60,23 @@ const BlogDetails = ({ blog, onBack }) => {
       <BackButton onBack={onBack} /> {/* Include the back button */}
       <Container sx={{ 
         display: 'flex', 
-        flexDirection: { xs: 'column', md: 'row' }, 
-        gap: 2,
-        alignItems: { xs: 'flex-start', md: 'center' }
+        flexDirection: 'column', 
+        alignItems: 'center'
       }}>
-        <Box sx={{ 
-          flex: 1, 
-          order: { xs: 1, md: 0 } 
-        }}>
-          <StyledImage src={blog.image} alt={blog.title} />
-        </Box>
-        <Box sx={{ 
-          flex: 1, 
-          order: { xs: 2, md: 1 } 
-        }}>
-          <TextContainer>
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                mb: 2, 
-                textTransform: 'capitalize' 
-              }}
-            >
-              {blog.title}
-            </Typography>
-            <Typography variant="body1">{blog.body}</Typography>
-          </TextContainer>
-        </Box>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            mb: 2, 
+            textTransform: 'capitalize',
+            textAlign: 'center'
+          }}
+        >
+          {blog.title}
+        </Typography>
+        <StyledImage src={blog.image} alt={blog.title} />
+        <TextContainer>
+          <Typography dangerouslySetInnerHTML={{__html: blog.body}} sx={{ mt: 2 }} />
+        </TextContainer>
       </Container>
     </StyledSection>
   );

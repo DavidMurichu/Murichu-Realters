@@ -5,7 +5,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { CompareContext } from '../../appService/compareService';
 import { TenureContext } from '../../appService/TenureProvider';
 import { showToast } from '../../appService/Toast/Toast';
-import logo from '../../images/logo-smal.png'
+import logo from '../../images/logo.png'
 
 const isLoggedIn = () => {
   return !!localStorage.getItem('access_token');
@@ -14,9 +14,35 @@ const isLoggedIn = () => {
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(isLoggedIn());
   const { compare } = useContext(CompareContext);
-  const { propertyTenure, setPropertyTenure } = useContext(TenureContext);
+  const { tenures, setPropertyTenure } = useContext(TenureContext);
   const [navList, setNavList] = useState(false);
+  const [navigationData, setNavigationData] = useState([
+    { text: 'home', path: '/' },
+    { text: 'about', path: '/about' },
+    { text: 'contact', path: '/contact' },
+  ]);
   const history = useHistory();
+
+  useEffect(() => {
+    const updatedNavigationData = [...navigationData];
+    
+    // Find the index of the 'home' item
+    const homeIndex = updatedNavigationData.findIndex(item => item.text === 'home');
+
+    tenures.forEach((tenure) => {
+      const exists = updatedNavigationData.some(item => item.text === tenure.description);
+      if (!exists) {
+        // Insert tenure right after the 'home' item
+        updatedNavigationData.splice(homeIndex + 1, 0, {
+          text: tenure.description,
+          path: '/listings',
+          payload: tenure.name,
+        });
+      }
+    });
+
+    setNavigationData(updatedNavigationData);
+  }, [tenures]);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -24,7 +50,6 @@ const Header = () => {
     };
 
     window.addEventListener('storage', handleStorageChange);
-
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -36,14 +61,13 @@ const Header = () => {
     }
     history.push(path);
   };
-
   return (
     <>
       <header style={navList ? { backgroundColor: '#27ae60' } : { backgroundColor: '#fff' }} >
         <div className='container flex'>
           <Link to='/'>
             <div className='logo'>
-              <img src={navList?('./images/logo.png'):('./images/logo.png')}   alt='' style={{zIndex: 99999999999999}} />
+              <img src={navList?logo:('./images/logo.png')}   alt='' style={{zIndex: 99999999999999}} />
             </div>
           </Link>
           <div className='nav'>

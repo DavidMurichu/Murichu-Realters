@@ -22,7 +22,7 @@ const FeaturedLink = () => {
         buttontext="Buy options"
         title="Buy a home"
         subtitle="Discover our latest properties, meticulously selected to meet your needs and lifestyle. Explore now and find your perfect home."
-        tenure="buy"
+        tenure="sale"
         sx={{ mb: { xs: 2, md: 0 }, mr: { xs: 0, md: 2 } }}
       />
       <LinkCard

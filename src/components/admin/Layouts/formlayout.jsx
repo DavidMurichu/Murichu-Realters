@@ -1,47 +1,89 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import debounce from 'lodash.debounce';
 import { Typography, TextField, Button, Grid, MenuItem, Box, IconButton } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Maincard from './maincard';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import the Snow theme for ReactQuill
 
 const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, isCombo = false, history_endpoint = '/' }) => {
     const [formState, setFormState] = useState(formData);
     const [errors, setErrors] = useState({});
-    const [selectedFiles, setSelectedFiles] = useState('');
     const history = useHistory();
 
     useEffect(() => {
         setFormState(formData);
     }, [formData]);
 
-
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
-        const updatedValue = type === 'checkbox' ? checked : (type === 'file' ? files : value);
-        if(name==='profile_image'){
-            
-            setFormData({
-                ...formData,
-                [name]:files[0]
-               
-            })
-            return
+    
+        // Handle file input
+        if (type === 'file') {
+            if (name === 'images') {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    [name]: Array.from(files), // Convert FileList to an array of files
+                }));
+            } else {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    [name]: files[0],
+                }));
+            }
+            return;
         }
+    
+        const updatedValue = type === 'checkbox' ? checked : value;
+    
         if (setFormData) {
-            setFormData({
-                ...formData,
+            setFormData((prevData) => ({
+                ...prevData,
                 [name]: updatedValue,
-            });
+            }));
         } else {
-            setFormState({
-                ...formState,
+            setFormState((prevState) => ({
+                ...prevState,
                 [name]: updatedValue,
-            });
+            }));
         }
-
-        
     };
+    
+    
+
+    const debouncedEditorChange = useCallback(
+        debounce((value, name) => {
+            if (setFormData) {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    [name]: value,
+                }));
+            } else {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    [name]: value,
+                }));
+            }
+        }, 300), // Adjust the debounce delay as needed
+        []
+    );
+
+    const handleEditorChange = (value, name) => {
+        if (setFormData) {
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        } else {
+            setFormState((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }));
+        }
+    };
+    
 
     const validate = () => {
         let tempErrors = {};
@@ -62,11 +104,6 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
                 for (let key in formState) {
                     formDataToSend.append(key, formState[key]);
                 }
-                if (selectedFiles) {
-                    Array.from(selectedFiles).forEach(file => {
-                        formDataToSend.append('files', file);
-                    });
-                }
                 await onSubmit(formDataToSend);
             } catch (error) {
                 console.error(`Error adding ${title.toLowerCase()}:`, error);
@@ -78,14 +115,13 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
     };
 
     return (
-        <Maincard title={title} style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }}>
+        <Maincard title={title} sx={{ backgroundColor: 'background.paper', color: 'text.primary', p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                {
-                    isCombo ? null :
-                        <IconButton color="primary" onClick={() => history.push(history_endpoint)}>
-                            <ArrowBackIcon />
-                        </IconButton>
-                }
+                {!isCombo && (
+                    <IconButton color="primary" onClick={() => history.push(history_endpoint)} sx={{ mr: 2 }}>
+                        <ArrowBackIcon />
+                    </IconButton>
+                )}
                 <Typography variant="h5" component="div">
                     {title}
                 </Typography>
@@ -96,7 +132,7 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
             <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit}>
                 <Grid container spacing={3}>
                     {fields.map((field) => (
-                        <Grid item xs={12} sm={field.size || 6} key={field.name}>
+                        <Grid item xs={12} sm={field.type === 'text-editor' ? 12 : (field.size || 6)} key={field.name}>
                             {field.type === 'select' ? (
                                 <TextField
                                     fullWidth
@@ -108,6 +144,20 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
                                     required={field.required || false}
                                     error={!!errors[field.name]}
                                     helperText={errors[field.name]}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '8px',
+                                            '& fieldset': {
+                                                borderColor: 'divider',
+                                            },
+                                            '&:hover fieldset': {
+                                                borderColor: 'primary.main',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: 'primary.main',
+                                            },
+                                        },
+                                    }}
                                 >
                                     {field.options.map((option) => (
                                         <MenuItem key={option.value} value={option.value}>
@@ -126,6 +176,11 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
                                     error={!!errors[field.name]}
                                     helperText={errors[field.name]}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '8px',
+                                        },
+                                    }}
                                 />
                             ) : field.type === 'files' ? (
                                 <TextField
@@ -139,7 +194,58 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
                                     helperText={errors[field.name]}
                                     InputLabelProps={{ shrink: true }}
                                     inputProps={{ multiple: true }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '8px',
+                                        },
+                                    }}
                                 />
+                            ) : field.type === 'text-editor' ? (
+                                <Grid item xs={12} key={field.name}>
+                                    <Box sx={{ mb: 2 }}>
+                                        <Typography variant="subtitle1" gutterBottom>{field.label}</Typography>
+                                        <Box sx={{
+                                            '& .ql-container': {
+                                                borderRadius: '8px',
+                                                border: '1px solid',
+                                                borderColor: 'divider',
+                                                overflow: 'hidden',
+                                                minHeight: '200px',
+                                                '& .ql-editor': {
+                                                    padding: 2,
+                                                },
+                                            },
+                                            '& .ql-toolbar': {
+                                                borderBottom: '1px solid',
+                                                borderColor: 'divider',
+                                            },
+                                        }}><ReactQuill
+                                        value={formState[field.name] || ''}
+                                        onChange={(value) => handleEditorChange(value, field.name)}
+                                        theme="snow"
+                                        placeholder={`Enter ${field.label.toLowerCase()} here...`}
+                                        modules={{
+                                            toolbar: [
+                                                [{ header: '1' }, { header: '2' }],
+                                                ['bold', 'italic', 'underline'],
+                                                ['link', 'image'],
+                                                [{ list: 'ordered' }, { list: 'bullet' }],
+                                                ['clean'],
+                                            ],
+                                        }}
+                                        formats={[
+                                            'header', 'bold', 'italic', 'underline', 'link', 'image', 'list', 'bullet'
+                                        ]}
+                                    />
+                                    
+                                        </Box>
+                                        {errors[field.name] && (
+                                            <Typography variant="caption" color="error">
+                                                {errors[field.name]}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                </Grid>
                             ) : (
                                 <TextField
                                     fullWidth
@@ -154,18 +260,30 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
                                     rows={field.rows || 1}
                                     error={!!errors[field.name]}
                                     helperText={errors[field.name]}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '8px',
+                                            '& fieldset': {
+                                                borderColor: 'divider',
+                                            },
+                                            '&:hover fieldset': {
+                                                borderColor: 'primary.main',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: 'primary.main',
+                                            },
+                                        },
+                                    }}
                                 />
                             )}
                         </Grid>
                     ))}
                     <Grid item xs={12}>
-                        {
-                            isCombo ? null : (
-                                <Button variant="contained" color="primary" type="submit">
-                                    Submit
-                                </Button>
-                            )
-                        }
+                        {!isCombo && (
+                            <Button variant="contained" color="primary" type="submit">
+                                Submit
+                            </Button>
+                        )}
                     </Grid>
                 </Grid>
             </Box>

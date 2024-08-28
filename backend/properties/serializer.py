@@ -38,7 +38,7 @@ class PropertyTypeSerializer(serializers.ModelSerializer):
 class PropertyTenureSerializer(serializers.ModelSerializer):
     class Meta:
         model = PropertyTenure
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'description']
 
 class PropertyImagesSerializer(serializers.ModelSerializer):
     class Meta:

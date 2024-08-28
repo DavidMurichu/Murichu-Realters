@@ -109,8 +109,8 @@ class PropertyImagesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         property_id = int(request.data.get('property'))
         files = request.FILES.getlist('images[]')
+        print('file', request.data)
         property = Properties.objects.get(id=property_id)
-        
         images = []
      
         for file in files:

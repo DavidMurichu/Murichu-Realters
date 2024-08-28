@@ -231,11 +231,10 @@ const Carousel = ({ items }) => {
                         {item.isFavourite ? <Favorite sx={{ color: 'orange' }} /> : <FavoriteBorder sx={{ color: 'white' }} />}
                       </IconButton>
                     </Box>
-                    <Box display={'flex'} padding={0} justifyContent={'space-between'}>
-                      <Typography variant="h6" noWrap>{item.property_name || 'Default Name'}</Typography>
+                      <Typography variant="h6"  overflow='none'>{item.property_name || 'Default Name'}</Typography>
                       <Typography variant="body2" noWrap>ksh: {item.property_price || 'Default price'}</Typography>
                       <Typography variant="h6" noWrap>{item.property_city || 'Default City'}</Typography>
-                    </Box>
+                    
                   </CardContent>
                   {/* <Box className="hover-icons">
                     <IconButton sx={{ color: 'white' }}>

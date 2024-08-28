@@ -10,7 +10,7 @@ const HeroFilter = () => {
     const [loading, setLoading] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [filteredProperties, setFilteredProperties] = useState([]);
-    const { setPropertyTenure, setLocation } = useContext(TenureContext);
+    const { setPropertyTenure, setLocation, tenures } = useContext(TenureContext);
 
     const history = useHistory();
 
@@ -18,24 +18,26 @@ const HeroFilter = () => {
         await FetchData('get-properties', setProperties, setLoading);
     };
 
+   
     useEffect(() => {
         fetch();
     }, []);
 
     const handleSearchChange = (event, newValue) => {
         const term = newValue.toLowerCase();
-        setInputValue(term);
-        setLocation(term);
-
+        setInputValue(newValue);
+        setLocation(newValue); // Update location in context
+    
         const filtered = properties
             .filter(property =>
                 property.property_city.toLowerCase().includes(term) || 
                 property.property_address.toLowerCase().includes(term)
             )
             .sort((a, b) => a.property_city.localeCompare(b.property_city));
-
+    
         setFilteredProperties(filtered);
     };
+    
 
     const handleItemClick = async (payload, path) => {
         if (payload) {
@@ -75,45 +77,21 @@ const HeroFilter = () => {
                         )}
                     />
                     <Box className="buttons-container" padding={1} display="flex" flexDirection={{ xs: 'column', sm: 'row' }}>
-                        <Button variant="contained" sx={{
-                            marginBottom: { xs: '8px', sm: '0' },
-                            marginRight: { sm: '8px' }, 
-                            background: 'green',
-                            '&:hover': {
-                                background: '#fff',
-                                color: '#000'
-                            }
-                        }}
-                        onClick={() => handleItemClick('buy', 'listings')}
-                        >
-                            Buy
-                        </Button>
-                        <Button variant="contained" sx={{
-                            marginBottom: { xs: '8px', sm: '0' },
-                            marginRight: { sm: '8px' },
-                            background: 'green',
-                            '&:hover': {
-                                background: '#fff',
-                                color: '#000'
-                            }
-                        }}
-                        onClick={() => handleItemClick('rent', 'listings')}
-                        >
-                            Rent
-                        </Button>
-                        <Button variant="contained" sx={{
-                            marginBottom: { xs: '8px', sm: '0' }, 
-                            marginRight: { sm: '8px' }, 
-                            background: 'green',
-                            '&:hover': {
-                                background: '#fff',
-                                color: '#000'
-                            }
-                        }}
-                        onClick={() => handleItemClick('land', 'listings')}
-                        >
-                            Land
-                        </Button>
+                        {tenures.map((tenure)=>(
+                            <Button key={tenure.id} variant="contained" sx={{
+                                marginBottom: { xs: '8px', sm: '0' },
+                                marginRight: { sm: '8px' }, 
+                                background: 'green',
+                                '&:hover': {
+                                    background: '#fff',
+                                    color: '#000'
+                                }
+                            }}
+                            onClick={() => handleItemClick(tenure.name, 'listings')}
+                            >
+                                {tenure.description}
+                            </Button>
+                        ))}
                     </Box>
                 </Box>
             </Container>

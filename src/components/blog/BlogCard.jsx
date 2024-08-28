@@ -59,10 +59,15 @@ const BlogCard = ({ list, handleDelete }) => {
   };
 
   const TextExcerpt = ({ text }) => {
-    const wordLimit = 20;
-    const words = text.split(' ');
+    const wordLimit = 10;
+    const plainText = text.replace(/<\/?[^>]+(>|$)/g, "");
+
+    const words = plainText.split(' ');
     const excerpt = words.length > wordLimit ? words.slice(0, wordLimit).join(' ') + '...' : text;
-    return excerpt;
+    return (
+      <Typography dangerouslySetInnerHTML={{__html: excerpt}} sx={{ mt: 2 }}>
+      </Typography>
+    );
   };
 
   if (selectedBlog) {
@@ -112,9 +117,7 @@ const BlogCard = ({ list, handleDelete }) => {
                     >
                       {val.title}
                     </Typography>
-                    <Typography sx={{ mt: 2 }}>
-                      <TextExcerpt text={val.body} />
-                    </Typography>
+                   <TextExcerpt text={val.body}/>
                   </CardContent>
                 </Box>
                 {handleDelete && (
