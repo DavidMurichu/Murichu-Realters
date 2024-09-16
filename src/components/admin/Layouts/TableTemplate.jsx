@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TableContainer from '@mui/material/TableContainer';
@@ -10,12 +10,10 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TablePagination from '@mui/material/TablePagination';
 import Checkbox from '@mui/material/Checkbox';
-import { ToastContainer, toast } from 'react-toastify';
-import { useHistory } from 'react-router-dom';
-
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import { FetchData } from '../../appService/Delay';
+import { useLoading } from '../../appService/Loading';
 
 
 
@@ -23,13 +21,14 @@ import { FetchData } from '../../appService/Delay';
 
 const TableTemplate = ({ columns, endpoint, buttons = [], checkboxes = [], refresh=null }) => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectAll, setSelectAll] = useState(false);
+  const {showLoading, hideLoading}=useLoading();
+
   const fetch=async()=>{
-    await FetchData(endpoint, setData, setLoading);
+    await FetchData(endpoint, setData,showLoading, hideLoading );
   }
   useEffect(() => {
    fetch();
@@ -44,9 +43,7 @@ const TableTemplate = ({ columns, endpoint, buttons = [], checkboxes = [], refre
     setPage(0);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
+ 
 
   const getStatusColor = (isActive) => (isActive ? 'green' : 'red');
 

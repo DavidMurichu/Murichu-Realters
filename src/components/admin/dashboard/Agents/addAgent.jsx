@@ -5,11 +5,13 @@ import { BASE_URL, Delay, FetchData } from '../../../appService/Delay';
 import ApiService from '../../../appService/data/PostData';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+import { useLoading } from '../../../appService/Loading';
 
 const AddAgentForm = () => {
   const history = useHistory();
   const [cities, setCities] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const {showLoading, hideLoading}=useLoading();
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -21,7 +23,7 @@ const AddAgentForm = () => {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        await FetchData('locations', setCities, setLoading);
+        await FetchData('locations', setCities, showLoading, hideLoading);
       } catch (error) {
         console.error('Error fetching cities:', error);
         // Handle error gracefully, e.g., show a toast or fallback mechanism

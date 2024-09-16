@@ -5,6 +5,7 @@ import "./team.css";
 import { FetchData } from '../../appService/Delay';
 import { useHistory } from 'react-router-dom';
 import { useMediaQuery, useTheme } from '@mui/material';
+import { useLoading } from '../../appService/Loading';
 
 const Card = ({ data, isActive, position }) => {
   const navigate = useHistory();
@@ -95,16 +96,16 @@ const Card = ({ data, isActive, position }) => {
 const Team = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [team, setTeam] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const {showLoading, hideLoading}=useLoading();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fetch = async () => {
     try {
-      await FetchData('get-agents', setTeam, setLoading);
+      await FetchData('get-agents', setTeam, showLoading,hideLoading);
     } catch (error) {
       console.error("Error fetching data", error);
-      setLoading(false);
+      hideLoading()
     }
   };
 

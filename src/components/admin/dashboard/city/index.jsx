@@ -3,10 +3,7 @@ import { Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import Maincard from "../../Layouts/maincard";
 import TableTemplate from "../../Layouts/TableTemplate";
-import { ToastContainer } from "react-toastify";
-import axios from "axios";
-import { BASE_URL } from "../../../appService/Delay";
-import { showToast } from "../../../appService/Toast/Toast";
+import ApiService from "../../../appService/data/PostData";
 
 const City = () => {
   const [refresh, setRefresh]=useState(false);
@@ -17,24 +14,10 @@ const City = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      const response = await axios.delete(`${BASE_URL}/locations/${id}/`, {
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`, 
-        },
-      });
-
-      if (response.status === 204) {
-        showToast('Image deleted successfully', 'success');
-        setRefresh(!refresh)
-      } else {
-        showToast('Failed to delete image', 'error');
-      }
-    } catch (error) {
-      showToast('Error deleting image', 'error');
-      console.error('Error deleting image:', error);
-    }
+   const Delete= await ApiService.delete('locations', id, refresh, setRefresh);
+   if(Delete){
+    setRefresh(true)
+   }
   };
 
   const columns = [

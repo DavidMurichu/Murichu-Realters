@@ -126,6 +126,7 @@ REST_FRAMEWORK = {
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:3001",
     "https://yourdomain.com",
     "https://7b71-102-0-10-240.ngrok-free.app"
 ]

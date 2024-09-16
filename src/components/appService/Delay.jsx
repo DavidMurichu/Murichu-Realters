@@ -3,6 +3,8 @@ import { toast } from 'react-toastify';
 
 export const BASE_URL = 'http://127.0.0.1:8000/api';
 
+export const token=localStorage.getItem('access_token');
+
 
 export const Delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 export const PostData= async(endpointPath, data, requiresAuth = false)=>{
@@ -37,31 +39,6 @@ export const DeleteData= async(endpointPath, id)=>{
     return false
   }
 }
-export const FetchData = async (endpointPath, setData, setLoading) => {
-    try {
-      if(setLoading){
-        setLoading(true);
-      }
-      const response = await axios.get(`${BASE_URL}/${endpointPath}/`);
-      setData(Array.isArray(response.data) 
-        ? response.data.map(item => ({ ...item, selected: false })) 
-        : []
-      );
-      if(response){
-        console.log('response', response);
-
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error('Failed to fetch data. Please try again.'); // Notify user of error
-      setData([]); // Clear data on error
-    } finally {
-      if(setLoading){
-        setLoading(false);
-      }
-    }
-  };
-
   export const formatPrice = (price) => {
     if (price >= 1_000_000_000) {
       return `${(price / 1_000_000_000).toFixed(1)}B`;
@@ -75,3 +52,30 @@ export const FetchData = async (endpointPath, setData, setLoading) => {
     return price;
   };
 
+export const FetchData = async (endpointPath, setData, showLoading, hideLoading) => {
+  try {
+    const token = localStorage.getItem('access_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`, // Define the headers object correctly
+    };
+    showLoading(); // Show loading spinner or animation
+
+    // Make the API request with headers
+    const response = await axios.get(`${BASE_URL}/${endpointPath}/`, { headers });
+    
+    // Set the fetched data, adding the 'selected: false' flag to each item
+    setData(
+      Array.isArray(response.data)
+        ? response.data.map((item) => ({ ...item, selected: false }))
+        : []
+    );
+    
+    console.log('response', response);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    toast.error('Failed to fetch data. Please try again.'); // Display error notification
+    setData([]); // Clear data on error
+  } finally {
+    hideLoading(); // Hide the loading spinner/animation
+  }
+};

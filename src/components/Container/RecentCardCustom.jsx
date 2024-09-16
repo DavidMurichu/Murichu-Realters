@@ -251,9 +251,26 @@ const RecentCardCustom = ({ list, handleDelete, agent=null}) => {
                       </IconButton>
                     </Box>
                     <Typography variant="h6">{val.property_name}</Typography>
-                    <Typography variant="body2" color="textSecondary" fontSize="15px">
-                      <i className="fa fa-location-dot" /> {val.property_address}, {val.property_city}
-                    </Typography>
+                    <Typography 
+  variant="body2" 
+  color="textSecondary" 
+  sx={{ 
+    fontSize: '15px', 
+    display: 'flex', 
+    alignItems: 'center', 
+    gap: '8px' // Adds space between icons and text
+  }}
+>
+  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+    <i className="fa fa-location-dot" style={{ color: '#27ae60' }} /> 
+    {val.property_address}, {val.property_city}
+  </span>
+  
+  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+    <i className="fa fa-bed" style={{ color: '#27ae60', marginLeft: '10px' }} /> 
+    {val.property_bedrooms} Bedrooms
+  </span>
+</Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
                       <Typography
                         variant="outlined"

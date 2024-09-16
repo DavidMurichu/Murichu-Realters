@@ -3,6 +3,7 @@ import Heading from "../../common/Heading";
 import "./style.css";
 import { FetchData } from "../../appService/Delay";
 import LocationCarousel from "./animation";
+import { useLoading } from "../../appService/Loading";
 
 const processPropertyData = (data) => {
     const cityData = {};
@@ -24,14 +25,15 @@ const processPropertyData = (data) => {
 const Location = () => {
     const [location, setLocation] = useState([]);
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true); // Initialize loading state as true
+    const {showLoading, hideLoading}=useLoading();
+    
 
     const fetch = async () => {
         try {
-            await FetchData('get-properties', setData, setLoading);
+            await FetchData('get-properties', setData, showLoading, hideLoading);
         } catch (error) {
             console.error("Error fetching data:", error);
-            setLoading(false);
+            hideLoading()
         }
     };
 
@@ -58,7 +60,7 @@ const Location = () => {
 
     return (
             location.length!==0 &&(
-                <section className='location padding'>
+                <section className='location background '>
                 <div className='container'>
                     <Heading 
                         title='Explore By Location' 

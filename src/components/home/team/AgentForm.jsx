@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Avatar, Box, IconButton, Tooltip, Grid, TextField, Button } from '@mui/material';
-import { Email, Phone, LocationCity, Home, WhatsApp } from '@mui/icons-material';
+import React, {useState } from 'react';
+import { Card, CardContent, Typography, Box,TextField, Button } from '@mui/material';
 import { keyframes } from '@emotion/react';
-import RecentCardCustom from '../../Container/RecentCardCustom';
-import { FetchData, PostData } from '../../appService/Delay';
-import { useLocation, useHistory } from 'react-router-dom';
-import AgentPropertyCard from './AgentPropertyCard';
-import AgentFormCard from './AgentForm';
+import { PostData } from '../../appService/Delay';
 import { toast } from 'react-toastify';
 
 

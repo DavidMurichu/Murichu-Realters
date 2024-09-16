@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import GenericForm from '../../Layouts/formlayout';
 import { ToastContainer, toast } from 'react-toastify';
-import { BASE_URL, Delay, FetchData, PostData } from '../../../appService/Delay';
+import { BASE_URL, Delay } from '../../../appService/Delay';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 

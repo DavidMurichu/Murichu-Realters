@@ -1,6 +1,8 @@
 from rest_framework import viewsets, mixins
 from .models import Agents, Location, PropertyType, Blogs, PropertyTenure, Properties, PropertyImages, UserResponse
 from .serializer import AgentGetSerializer, MessageSerializer, AgentSerializer, LocationSerializer, PropertyGetSerializer, PropertyTypeSerializer, PropertyTenureSerializer, PropertiesSerializer, PropertyImagesSerializer, UserResponsSerializer, BlogsSerializer
+from .permissions import get_custom_permissions
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -14,12 +16,21 @@ from rest_framework.views import APIView
 import os
 from dotenv import load_dotenv
 load_dotenv()
+import threading
+
+
+
 
 class UserResponseViewSet(viewsets.ModelViewSet):
-    queryset=UserResponse.objects.all()
-    serializer_class=UserResponsSerializer
+    queryset = UserResponse.objects.all()
+    serializer_class = UserResponsSerializer
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['GET', 'DELETE','PATCH', 'PUT' ]  # Example of restricted HTTP methods
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
 
     def perform_create(self, serializer):
+        # Save user response (main thread)
         user_response = serializer.save()
 
         # Prepare email details
@@ -39,33 +50,60 @@ class UserResponseViewSet(viewsets.ModelViewSet):
             f"Agent: {agent_name}\n"
             f"Subject: {user_response.subject if user_response.subject else 'No Subject'}\n"
         )
-        from_email =  os.getenv('ADMIN_EMAIL')
-        admin_email =  os.getenv('ADMIN_EMAIL')
+        from_email = os.getenv('ADMIN_EMAIL')
+        admin_email = os.getenv('ADMIN_EMAIL')
 
-        # Use SendMessageViewSet to send the email
-        send_message_viewset = SendMessageViewSet()
-        error = send_message_viewset.send_email(subject, message, from_email, admin_email)
+        # Start a new thread for sending the email
+        email_thread = threading.Thread(target=self.send_email_thread, args=(subject, message, from_email, admin_email))
+        email_thread.start()
 
-        if error:
-            # Handle the error (e.g., log it, raise an exception, etc.)
-            print(f"Error sending email: {error}")
+    def send_email_thread(self, subject, message, from_email, admin_email):
+        try:
+            send_mail(
+                subject,
+                message,
+                from_email,
+                [admin_email],
+                fail_silently=False,
+            )
+            print(f"Email sent successfully to {admin_email}")
+        except Exception as e:
+            # Handle email sending failure (log it or raise an exception)
+            print(f"Error sending email: {e}")
+
+
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
-
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['PATCH', 'PUT' ,'POST', 'DELETE']  # Example of restricted HTTP methods
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
 class PropertyTypeViewSet(viewsets.ModelViewSet):
     queryset = PropertyType.objects.all()
     serializer_class = PropertyTypeSerializer
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['GET','PATCH', 'PUT', 'POST', 'DELETE']
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
 
 class PropertyTenureViewSet(viewsets.ModelViewSet):
     queryset = PropertyTenure.objects.all()
     serializer_class = PropertyTenureSerializer
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['PATCH', 'PUT', 'POST', 'DELETE']
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
 
 class PropertiesViewSet(viewsets.ModelViewSet):
     queryset = Properties.objects.all()
     print(queryset)
     serializer_class = PropertiesSerializer
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['GET','PATCH', 'PUT', 'POST', 'DELETE']
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
 
     def list(self, request, *args, **kwargs):
         properties = self.queryset
@@ -105,7 +143,12 @@ class PropertiesViewSet(viewsets.ModelViewSet):
 class PropertyImagesViewSet(viewsets.ModelViewSet):
     queryset = PropertyImages.objects.all()
     serializer_class = PropertyImagesSerializer
-    parser_classes = (MultiPartParser, FormParser)         
+    parser_classes = (MultiPartParser, FormParser)   
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['PATCH', 'PUT', 'POST', 'DELETE']
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
+      
     def create(self, request, *args, **kwargs):
         property_id = int(request.data.get('property'))
         files = request.FILES.getlist('images[]')
@@ -124,7 +167,11 @@ class PropertyImagesViewSet(viewsets.ModelViewSet):
 class AgentsViewSet(viewsets.ModelViewSet):
     queryset = Agents.objects.all()
     serializer_class = AgentSerializer
-    
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['GET','PATCH', 'PUT', 'POST', 'DELETE']
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
+
     def create(self, request, *args, **kwargs):
 
         serializer = self.get_serializer(data=request.data)
@@ -141,10 +188,19 @@ class AgentsViewSet(viewsets.ModelViewSet):
 class AgentGetViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Agents.objects.all()
     serializer_class = AgentGetSerializer
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['PATCH', 'PUT', 'POST', 'DELETE']
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
 
 class BlogsViewSet(viewsets.ModelViewSet):
     queryset = Blogs.objects.all()
     serializer_class= BlogsSerializer
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['PATCH', 'PUT', 'POST', 'DELETE']
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
+
 
 @api_view(['POST'])
 def verify_token(request):
@@ -194,6 +250,10 @@ def get_properties(request):
 class PropertiesGetViewSet(viewsets.ModelViewSet):
     queryset = Properties.objects.all()
     serializer_class = PropertyGetSerializer
+    def get_permissions(self):
+        # Pass the restricted HTTP methods (e.g., POST, GET, PUT, DELETE)
+        restricted_methods = ['PATCH', 'PUT', 'POST', 'DELETE']
+        return get_custom_permissions(self.action, restricted_methods) or super().get_permissions()
 
     def get_serializer_context(self):
         """

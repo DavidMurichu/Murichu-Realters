@@ -90,21 +90,66 @@ const AdvanceFilter = ({ data, onFilterUpdate }) => {
     timeout = setTimeout(later, wait);
   };
 }
-  useEffect(() => {
-    const filtered = data.filter(item => {
+useEffect(() => {
+  const filterProperties = (data) => {
+    return data.filter(item => {
       const matchesCategory = !propertyTenure || item.property_tenure === propertyTenure;
       const matchesType = !property || item.property_type === property;
       const matchesLocation = !location || item.property_city.toLowerCase().includes(location.toLowerCase());
       const matchesBedrooms = !bedrooms || item.property_bedrooms === parseInt(bedrooms);
       const matchesMinPrice = !priceMin || item.property_price >= priceMin;
       const matchesMaxPrice = !sliderValue || item.property_price <= sliderValue;
+      
       return matchesCategory && matchesType && matchesLocation && matchesBedrooms && matchesMinPrice && matchesMaxPrice;
     });
+  };
 
-    setFilteredData(filtered);
-    debounceFilterUpdate(filtered);
-  }, [location, property, bedrooms, sliderValue, propertyTenure, priceMin, data, debounceFilterUpdate]);
+  // First attempt filtering with all filters applied
+  let filtered = filterProperties(data);
 
+  if (filtered.length === 0) {
+    console.warn('No results found. Relaxing tenure filter...');
+    
+    // Step 1: Relax tenure filter
+    filtered = data.filter(item => {
+      const matchesType = !property || item.property_type === property;
+      const matchesLocation = !location || item.property_city.toLowerCase().includes(location.toLowerCase());
+      const matchesBedrooms = !bedrooms || item.property_bedrooms === parseInt(bedrooms);
+      const matchesMinPrice = !priceMin || item.property_price >= priceMin;
+      const matchesMaxPrice = !sliderValue || item.property_price <= sliderValue;
+
+      // Ignore tenure (relaxed)
+      return matchesType && matchesLocation && matchesBedrooms && matchesMinPrice && matchesMaxPrice;
+    });
+
+    // If still no results, further relax other filters
+    if (filtered.length === 0) {
+      console.warn('Still no results. Relaxing price range...');
+      
+      // Step 2: Relax price range and bedrooms
+      filtered = data.filter(item => {
+        const matchesType = !property || item.property_type === property;
+        const matchesLocation = !location || item.property_city.toLowerCase().includes(location.toLowerCase());
+        
+        // Ignore tenure and relax price range
+        const matchesMinPrice = item.property_price >= (priceMin * 0.8); // Relax minimum price by 20%
+        const matchesMaxPrice = item.property_price <= (sliderValue * 1.2); // Relax maximum price by 20%
+
+        // Ignore bedrooms
+        return matchesType && matchesLocation && matchesMinPrice && matchesMaxPrice;
+      });
+      
+      // As a last resort, show all properties
+      if (filtered.length === 0) {
+        console.warn('No results with relaxed filters. Showing all properties.');
+        filtered = data; // Show all data as fallback
+      }
+    }
+  }
+
+  setFilteredData(filtered);
+  debounceFilterUpdate(filtered);
+}, [location, property, bedrooms, sliderValue, propertyTenure, priceMin, data, debounceFilterUpdate]);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 

@@ -4,9 +4,8 @@ import { Box, Typography, Button, IconButton, Card, CardContent, CardMedia, Grid
 import { Phone, WhatsApp, Email, Delete } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/system';
 import { CompareContext } from '../appService/compareService'; // Ensure CompareContext is correctly imported and provided
-import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
-import { BASE_URL } from '../appService/Delay';
+import { ToastContainer } from 'react-toastify';
+import ApiService from "../appService/data/PostData";
 
 const fadeIn = keyframes`
   from {
@@ -55,47 +54,16 @@ const AgentCardCustom = ({ list, isAdmin }) => {
     history.go(0);
   };
 
-  const addCompare = (val) => {
-    if (compare[val.id]) {
-      toast.error('Item already exists in compare', { autoClose: 1000 });
-    } else {
-      setCompare((prev) => ({
-        ...prev,
-        [val.id]: val,
-      }));
-      toast.success('Item added to compare');
-    }
-  };
-
-  const handleViewPhoto = () => {};
+ 
 
   const handleDelete = async (id) => {
-    try {
-      const response = await axios.delete(`${BASE_URL}/agents/${id}/`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.status === 204) {
-        toast.success('Agent deleted successfully');
-        setItems((prevItems) => prevItems.filter((item) => item.id !== id));
-      } else {
-        toast.error('Failed to delete agent');
-      }
-    } catch (error) {
-      toast.error('Error deleting agent');
-      console.error('Error deleting agent:', error);
+    const Delete= await ApiService.delete('agents', id);
+    if(Delete){
+      setItems((prevItems) => prevItems.filter((item) => item.id !== id));
     }
-  };
+   };
 
-  const toggleFavourite = (id) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, isFavourite: !item.isFavourite } : item
-      )
-    );
-  };
+ 
 
   if (!items || items.length === 0) {
     return (
@@ -217,7 +185,6 @@ const AgentCardCustom = ({ list, isAdmin }) => {
             </Box>}
         </StyledCard>
       )}
-      <ToastContainer />
     </>
   );
 };

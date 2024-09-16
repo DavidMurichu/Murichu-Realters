@@ -4,9 +4,10 @@ import { ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
 import Maincard from "../../Layouts/maincard";
 import axios from "axios";
-import { BASE_URL } from "../../../appService/Delay";
+import { BASE_URL, token } from "../../../appService/Delay";
 import { useState } from "react";
 import { showToast } from "../../../appService/Toast/Toast";
+import ApiService from "../../../appService/data/PostData";
 
 const PropertyTenure=()=>{
 
@@ -16,27 +17,11 @@ const PropertyTenure=()=>{
     }
 
     const handleDelete = async (id) => {
-        try {
-          const response = await axios.delete(`${BASE_URL}/property-tenures/${id}/`, {
-            headers: {
-              'Content-Type': 'application/json',
-              // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`, 
-            },
-          });
-    
-          if (response.status === 204) {
-            showToast('Image deleted successfully', 'success');
-            setRefresh(!refresh)
-          } else {
-            showToast('Failed to delete image', 'error');
-          }
-        } catch (error) {
-          showToast('Error deleting image', 'error');
-          console.error('Error deleting image:', error);
-        }
-      };
-
-
+      const Delete= await ApiService.delete('property-tenures', id, refresh, setRefresh);
+      if(Delete){
+       setRefresh(true)
+      }
+     };
 
     const columns=[
         {field: 'name', headerName: 'Property Tenure'}

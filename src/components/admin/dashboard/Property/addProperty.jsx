@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { FetchData } from '../../../appService/Delay';
 import AddPropertyImageForm from './AddPropertyImage';
 import ApiService from '../../../appService/data/PostData';
+import { useLoading } from '../../../appService/Loading';
 
 const AddPropertyForm = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +24,8 @@ const AddPropertyForm = () => {
   const [property_tenures, setProperty_tenures] = useState([]);
   const [agents, setAgents] = useState([]);
   const [propertyData, setPropertyData] = useState(null);
+  const {showLoading, hideLoading}=useLoading();
+
 
   const handleSubmit = async (event) => {
     
@@ -60,10 +63,10 @@ const AddPropertyForm = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      await FetchData('locations', setCities);
-      await FetchData('property-types', setProperty_types);
-      await FetchData('property-tenures', setProperty_tenures);
-      await FetchData('agents', setAgents);
+      await FetchData('locations', setCities,showLoading, hideLoading );
+      await FetchData('property-types', setProperty_types, showLoading,hideLoading);
+      await FetchData('property-tenures', setProperty_tenures,showLoading,hideLoading);
+      await FetchData('agents', setAgents,showLoading, hideLoading);
     };
   
     fetch();

@@ -4,17 +4,19 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { FetchData } from '../../appService/Delay';
 import { useHistory } from 'react-router-dom';
 import { TenureContext } from '../../appService/TenureProvider';
+import { useLoading } from '../../appService/Loading';
 
 const HeroFilter = () => {
     const [properties, setProperties] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [filteredProperties, setFilteredProperties] = useState([]);
     const { setPropertyTenure, setLocation, tenures } = useContext(TenureContext);
+    const {showLoading, hideLoading}=useLoading();
 
     const history = useHistory();
 
     const fetch = async () => {
-        await FetchData('get-properties', setProperties);
+        await FetchData('get-properties', setProperties, showLoading,hideLoading);
     };
 
    

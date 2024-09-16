@@ -9,15 +9,18 @@ import RecentCardCustom from '../../../Container/RecentCardCustom';
 import { BASE_URL, FetchData } from '../../../appService/Delay';
 import axios from 'axios';
 import { showToast } from '../../../appService/Toast/Toast';
+import { useLoading } from '../../../appService/Loading';
+import ApiService from '../../../appService/data/PostData';
 
 
 function PropertyManagement() {
 
     const [properties, setProperties]=useState([]);
-    const [loading, setLoading]=useState(false);
+    const {showLoading, hideLoading}=useLoading();
+
 
     const fetch=async()=>{
-        await FetchData('get-properties', setProperties, setLoading);
+        await FetchData('get-properties', setProperties, showLoading, hideLoading);
     }
     useEffect(
         ()=>{
@@ -26,43 +29,12 @@ function PropertyManagement() {
     )
 
     const handleDelete = async (id) => {
-        try {
-          const response = await axios.delete(`${BASE_URL}/properties/${id}/`, {
-            headers: {
-              'Content-Type': 'application/json',
-              // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`, 
-            },
-          });
-    
-          if (response.status === 204) {
-            showToast('Image deleted successfully', 'success');
-            setProperties((prevItems) => prevItems.filter((item) => item.id !== id));
-          } else {
-            showToast('Failed to delete image', 'error');
-          }
-        } catch (error) {
-          showToast('Error deleting image', 'error');
-          console.error('Error deleting image:', error);
-        }
-      };
+      const Delete= await ApiService.delete('properties', id);
+      if(Delete){
+        setProperties((prevItems) => prevItems.filter((item) => item.id !== id));
+      }
+     };
 
-    const property = {
-        id: 1,
-        property_name: 'Property 1',
-        property_city: 'Nairobi',
-        property_address: '123 Luthuri Avenue',
-        property_price: 20000.0,
-        property_tenure: 'sale',
-        property_type: 'Apartment',
-        property_bedrooms: 4,
-        property_images: {
-          images: [
-            '../images/list/p-4.png',
-            '../images/list/p-5.png',
-          ],
-        },
-        property_description: 'This is a beautiful apartment located in the heart of Nairobi, featuring modern amenities and a spacious living area.'
-      };
     return (
         <>
         <Maincard title="Property Management">
@@ -83,7 +55,6 @@ function PropertyManagement() {
            <RecentCardCustom 
            handleDelete={handleDelete}
            list={properties} />
-           {/* <ImageViewer list={images} /> */}
         </Maincard>
        
         </>

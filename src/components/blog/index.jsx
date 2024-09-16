@@ -5,12 +5,14 @@ import img from "../images/services.jpg"
 import BlogCard from "./BlogCard"
 import { useEffect, useState } from "react"
 import { FetchData } from "../appService/Delay"
+import { useLoading } from "../appService/Loading"
 
 const Blog=()=>{
     const [blogs, setBlogs]=useState([]);
-    const [loading, setLoading]=useState(false)
+    const {showLoading, hideLoading}=useLoading();
+
     const getBlogs=async()=>{
-         await FetchData('blogs', setBlogs, setLoading);
+         await FetchData('blogs', setBlogs, showLoading, hideLoading);
     }
     useEffect(()=>{
         getBlogs()

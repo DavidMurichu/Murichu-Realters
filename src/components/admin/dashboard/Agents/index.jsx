@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react"
 import "../../../home/recent/recent.css"
 import { propertyData } from "../../../data/Data"
-import AdvancedFilter from "../../../filter/AdvanceFilter"
-import RecentCardCustom from "../../../Container/RecentCardCustom"
 import { ToastContainer } from "react-toastify"
 import { FetchData } from "../../../appService/Delay"
 import AgentCardCustom from "../../../Container/AgentsCard"
 import { Button, Typography } from "@mui/material"
 import { Link } from "react-router-dom"
+import { useLoading } from "../../../appService/Loading"
 
 
 const Agents = () => {
-  const [loading, setLoading]=useState(false);
+  const {showLoading, hideLoading}=useLoading();
   const [filteredList, setFilteredList] = useState(propertyData);
   useEffect(()=>{
     const fetch=async()=>{
-      await FetchData('get-agents', setFilteredList, setLoading);
+      await FetchData('get-agents', setFilteredList, showLoading, hideLoading);
     }
     fetch()
   }, [])

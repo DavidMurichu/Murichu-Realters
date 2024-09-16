@@ -4,6 +4,7 @@ import { DeleteData, FetchData, PostData } from '../../../appService/Delay';
 import { styled } from '@mui/material/styles';
 import { ToastContainer, toast } from 'react-toastify';
 import ContactDetails from './viewmore'; // Adjust the path as needed
+import { useLoading } from '../../../appService/Loading';
 
 const SmallButton = styled(Button)({
   fontSize: '0.75rem', 
@@ -22,7 +23,7 @@ const ButtonContainer = styled(Box)({
 });
 
 const UserResponses = () => {
-  const [loading, setLoading] = useState(false);
+  const {showLoading, hideLoading}=useLoading();
   const [responses, setResponses] = useState([]);
   const [open, setOpen] = useState(false); // Modal state for sending message
   const [showDetails, setShowDetails] = useState(false); // State for showing ContactDetails
@@ -35,7 +36,7 @@ const UserResponses = () => {
   });
 
   const getResponse = async () => {
-    await FetchData('user-responses', setResponses, setLoading);
+    await FetchData('user-responses', setResponses, showLoading, hideLoading);
   };
 
   const handleSendMessage = (response) => {
@@ -80,7 +81,7 @@ const UserResponses = () => {
   const handleDelete = async (id) => {
     const confirm = window.confirm("Are you sure you want to delete this response?");
     if (confirm) {
-      setLoading(true);
+      showLoading()
       try {
         const response = await DeleteData('user-responses', id);
         if (response === true) {
@@ -92,7 +93,7 @@ const UserResponses = () => {
       } catch (error) {
         toast.error('Error deleting response');
       } finally {
-        setLoading(false);
+        hideLoading()
       }
     }
   };

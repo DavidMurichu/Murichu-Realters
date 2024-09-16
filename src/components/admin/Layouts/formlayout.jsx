@@ -5,8 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Maincard from './maincard';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // Import the Snow theme for ReactQuill
+import TextEditor from './TextEditor'; // Import the new TextEditor component
 
 const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, isCombo = false, history_endpoint = '/' }) => {
     const [formState, setFormState] = useState(formData);
@@ -19,7 +18,7 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
 
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
-    
+
         // Handle file input
         if (type === 'file') {
             if (name === 'images') {
@@ -35,9 +34,9 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
             }
             return;
         }
-    
+
         const updatedValue = type === 'checkbox' ? checked : value;
-    
+
         if (setFormData) {
             setFormData((prevData) => ({
                 ...prevData,
@@ -50,8 +49,6 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
             }));
         }
     };
-    
-    
 
     const debouncedEditorChange = useCallback(
         debounce((value, name) => {
@@ -83,7 +80,6 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
             }));
         }
     };
-    
 
     const validate = () => {
         let tempErrors = {};
@@ -219,25 +215,11 @@ const GenericForm = ({ formData, title, fields, onSubmit, setFormData = null, is
                                                 borderBottom: '1px solid',
                                                 borderColor: 'divider',
                                             },
-                                        }}><ReactQuill
-                                        value={formState[field.name] || ''}
-                                        onChange={(value) => handleEditorChange(value, field.name)}
-                                        theme="snow"
-                                        placeholder={`Enter ${field.label.toLowerCase()} here...`}
-                                        modules={{
-                                            toolbar: [
-                                                [{ header: '1' }, { header: '2' }],
-                                                ['bold', 'italic', 'underline'],
-                                                ['link', 'image'],
-                                                [{ list: 'ordered' }, { list: 'bullet' }],
-                                                ['clean'],
-                                            ],
-                                        }}
-                                        formats={[
-                                            'header', 'bold', 'italic', 'underline', 'link', 'image', 'list', 'bullet'
-                                        ]}
-                                    />
-                                    
+                                        }}>
+                                            <TextEditor
+                                                initialMarkup={formState[field.name] || ''}
+                                                onChange={(value) => handleEditorChange(value, field.name)}
+                                            />
                                         </Box>
                                         {errors[field.name] && (
                                             <Typography variant="caption" color="error">

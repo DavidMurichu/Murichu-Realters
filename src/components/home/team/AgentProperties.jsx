@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Avatar, Box, IconButton, Tooltip, Grid, TextField, Button } from '@mui/material';
-import { Email, Phone, LocationCity, Home, WhatsApp } from '@mui/icons-material';
+import { Typography, Box} from '@mui/material';
 import { keyframes } from '@emotion/react';
 import RecentCardCustom from '../../Container/RecentCardCustom';
-import { FetchData } from '../../appService/Delay';
 import { useLocation, useHistory } from 'react-router-dom';
 import AgentFormsCard from './AgentForm';
 import AgentPropertyCard from './AgentPropertyCard';
@@ -24,7 +22,6 @@ const fadeIn = keyframes`
 
   const AgentProperties = () => {
     const [data, setData]=useState([]);
-    const [loading, setLoading]=useState(true);
     const location=useLocation();
     const history=useHistory()
 

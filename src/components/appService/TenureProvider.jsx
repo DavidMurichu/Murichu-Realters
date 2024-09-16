@@ -1,16 +1,17 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { FetchData } from './Delay';
+import { useLoading } from './Loading';
 
 const TenureContext = createContext();
 
 const TenureProvider = ({ children }) => {
-  const [loading, setLoading] = useState(false);
+  const {showLoading, hideLoading}=useLoading();
   const [tenures, setTenures] = useState([]);
   const [propertyTenure, setPropertyTenure] = useState('');
   const [location, setLocation] = useState('');
 
   const fetch = async () => {
-    await FetchData('property-tenures', setTenures, setLoading);
+    await FetchData('property-tenures', setTenures, showLoading, hideLoading);
   };
 
   useEffect(() => {

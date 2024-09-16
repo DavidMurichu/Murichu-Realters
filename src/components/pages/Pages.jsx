@@ -34,12 +34,14 @@ import Blog from '../blog';
 import UserResponses from '../admin/dashboard/user-response/idex';
 import BlogManagement from '../admin/dashboard/Blogs';
 import AddBlog from '../admin/dashboard/Blogs/addblog';
-import { LoadingProvider } from '../appService/Loading';
+import { LoadingContext, LoadingProvider, useLoading } from '../appService/Loading';
+import { useContext } from 'react';
 
 
 
 const AdminRoute = ({ component: Component, ...rest }) => {
   const { isAuthenticated } = useAuth();
+
   return (
     <Route
       {...rest}
@@ -55,6 +57,7 @@ const AdminRoute = ({ component: Component, ...rest }) => {
     />
   );
 };
+
 
 const Pages = () => {
   return (
